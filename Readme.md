@@ -1,7 +1,6 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Danila Abramov](https://up.htmlacademy.ru/ecmascript/12/user/1001661).
-* Наставник: `Неизвестно`.
 
 ---
 

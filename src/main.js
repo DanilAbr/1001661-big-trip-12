@@ -295,11 +295,11 @@ const createEventTemplate = () =>
         <span class="visually-hidden">Open event</span>
       </button>
     </div>
-  </li>`
+  </li>`;
 
 const render = (element, template, position = `beforeend`) => {
   element.insertAdjacentHTML(position, template);
-}
+};
 
 const pageHeaderElement = document.querySelector(`.page-header`);
 const pageMainElement = document.querySelector(`.page-main`);
@@ -321,6 +321,6 @@ const eventsContainerElement = daysContainerElement.querySelector(`.trip-events_
 
 render(eventsContainerElement, createEventEditTemplate());
 
-for (var i = 0; i < EVENT_COUNT; i++) {
+for (let i = 0; i < EVENT_COUNT; i++) {
   render(eventsContainerElement, createEventTemplate());
 }

@@ -16,3 +16,8 @@ const createTripInfoTemplate = () =>
 const render = (container, template, position = `beforeend`) => {
   container.insertAdjacentHTML(position, template);
 }
+
+const pageHeaderElement = document.querySelector(`.page-header`);
+const tripMainElement = pageHeaderElement.querySelector(`.trip-main`);
+
+render(tripMainElement, createTripInfoTemplate(), `afterbegin`);

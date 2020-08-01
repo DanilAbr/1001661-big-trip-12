@@ -12,3 +12,7 @@ const createTripInfoTemplate = () =>
       Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
     </p>
   </section>`;
+
+const render = (container, template, position = `beforeend`) => {
+  container.insertAdjacentHTML(position, template);
+}

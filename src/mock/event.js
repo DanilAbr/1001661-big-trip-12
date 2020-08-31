@@ -1,5 +1,5 @@
-﻿import {getRandomArrayItem, getRandomInteger, getRandomBoolean} from './../util.js';
-import {cities, eventTypes} from './../const.js';
+import {getRandomArrayItem, getRandomInteger, getRandomBoolean} from './../util.js';
+import {cities, eventTypes, text} from './../const.js';
 
 const options = [{
   name: `Order Uber`,
@@ -46,6 +46,19 @@ const generateEndDate = (date) => {
 const generateOptions = () =>
   options.filter(() => getRandomBoolean());
 
+const getRandomInfo = (currentText) => {
+  const sentences = currentText.slice(0, -1).split(`. `);
+  const randomSentences = [];
+  sentences
+    .map((sentence) => {
+      if (getRandomBoolean()) {
+        randomSentences.push(sentence);
+      }
+    });
+
+  return randomSentences.join(`. `) + `.`;
+};
+
 const generateEvent = () => {
   const startDate = generateStartDate();
   const endDate = generateEndDate(startDate);
@@ -57,6 +70,8 @@ const generateEvent = () => {
     price: getRandomInteger(10, 10000),
     startDate,
     endDate,
+    info: getRandomInfo(text),
+    photos: `http://picsum.photos/248/152?r=${Math.random()}`,
   };
 };
 

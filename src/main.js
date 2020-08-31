@@ -7,8 +7,15 @@ import {createDayTemplate} from './view/day.js';
 import {createEventEditTemplate} from './view/event-edit.js';
 import {createEventTemplate} from './view/event.js';
 import {render} from './util.js';
+import {generateEvent} from './mock/event.js';
+import {EVENTS_COUNT} from './const.js';
 
-const EVENT_COUNT = 3;
+const events = new Array(EVENTS_COUNT)
+  .fill()
+  .map(generateEvent)
+  .sort((a, b) => {
+    return a.startDate.getTime() - b.startDate.getTime();
+  });
 
 const pageHeaderElement = document.querySelector(`.page-header`);
 const pageMainElement = document.querySelector(`.page-main`);
@@ -24,12 +31,35 @@ render(mainContentElement, createEventsContainerTemplate());
 
 const daysContainerElement = mainContentElement.querySelector(`.trip-days`);
 
-render(daysContainerElement, createDayTemplate());
+const days = events
+  .slice(1)
+  .reduce((summ, currentEvent) => {
+    const currentDate = currentEvent.startDate.getDate();
+    const currentDay = summ[summ.length - 1];
+    const lastEvent = currentDay[0];
+    const lastEventDate = lastEvent.startDate.getDate();
 
-const eventsContainerElement = daysContainerElement.querySelector(`.trip-events__list`);
+    if (currentDate === lastEventDate) {
+      currentDay.push(currentEvent);
+    } else {
+      summ.push([currentEvent]);
+    }
 
-render(eventsContainerElement, createEventEditTemplate());
+    return summ;
+  }, [[events[0]]]);
 
-for (let i = 0; i < EVENT_COUNT; i++) {
-  render(eventsContainerElement, createEventTemplate());
-}
+days.forEach((day, index) => {
+  render(daysContainerElement, createDayTemplate(day, index));
+});
+
+const eventsContainerElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
+
+eventsContainerElements.forEach((eventsContainerElement, index) => {
+  days[index]
+    .map((event) => {
+      render(eventsContainerElement, createEventTemplate(event));
+    });
+});
+
+
+render(eventsContainerElements[0], createEventEditTemplate(), `afterbegin`);

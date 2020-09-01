@@ -18,6 +18,7 @@ const getImageName = (eventType) => {
   if (eventType === `Check`) {
     eventType += `-in`;
   }
+
   return eventType.toLowerCase();
 };
 

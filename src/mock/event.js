@@ -1,26 +1,5 @@
 import {getRandomArrayItem, getRandomInteger, getRandomBoolean} from './../util.js';
-import {cities, eventTypes, text} from './../const.js';
-
-const options = [{
-  name: `Order Uber`,
-  price: `20`,
-},
-{
-  name: `Add luggage`,
-  price: `50`,
-},
-{
-  name: `Switch to comport`,
-  price: `80`,
-},
-{
-  name: `Rent a car`,
-  price: `200`,
-},
-{
-  name: `Add breakfast`,
-  price: `50`,
-}];
+import {cities, eventTypes, optionsArray} from './../const.js';
 
 const generateStartDate = () => {
   const maxGap = 1000 * 60 * 60 * 24 * 7;
@@ -43,34 +22,37 @@ const generateEndDate = (date) => {
   return currentDate;
 };
 
-const generateOptions = () =>
-  options.filter(() => getRandomBoolean());
+const generateOptions = (options) => {
+  return options.filter(() => getRandomBoolean());
+};
 
-const getRandomInfo = (currentText) => {
-  const sentences = currentText.slice(0, -1).split(`. `);
+const getRandomInfo = () => {
   const randomSentences = [];
-  sentences
-    .map((sentence) => {
-      if (getRandomBoolean()) {
-        randomSentences.push(sentence);
-      }
-    });
+  const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
+
+  const sentences = text.slice(0, -1).split(`. `);
+  sentences.map((sentence) => getRandomBoolean() ? randomSentences.push(sentence) : ``);
 
   return randomSentences.join(`. `) + `.`;
 };
 
 const generateEvent = () => {
+  const type = getRandomArrayItem(eventTypes);
+  const city = getRandomArrayItem(cities);
+  const options = generateOptions(optionsArray);
+  const price = getRandomInteger(10, 10000);
   const startDate = generateStartDate();
   const endDate = generateEndDate(startDate);
+  const info = getRandomInfo();
 
   return {
-    type: getRandomArrayItem(eventTypes),
-    city: getRandomArrayItem(cities),
-    options: generateOptions(),
-    price: getRandomInteger(10, 10000),
+    type,
+    city,
+    options,
+    price,
     startDate,
     endDate,
-    info: getRandomInfo(text),
+    info,
     photos: `http://picsum.photos/248/152?r=${Math.random()}`,
   };
 };

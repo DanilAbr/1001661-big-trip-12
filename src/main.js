@@ -4,9 +4,9 @@ import {createTripFiltersTemplate} from './view/trip-filters.js';
 import {createTripSortTemplate} from './view/trip-sort.js';
 import {createEventsContainerTemplate} from './view/events-container.js';
 import {createDayTemplate} from './view/day.js';
-import {createEventEditTemplate} from './view/event-edit.js';
+// import {createEventEditTemplate} from './view/event-edit.js';
 import {createEventTemplate} from './view/event.js';
-import {render} from './util.js';
+import {renderTemplate} from './util.js';
 import {generateEvent} from './mock/event.js';
 import {EVENTS_COUNT} from './const.js';
 
@@ -23,42 +23,39 @@ const tripControlsElement = pageHeaderElement.querySelector(`.trip-controls`);
 const tripMenuTitleElement = tripControlsElement.querySelector(`h2`);
 const mainContentElement = pageMainElement.querySelector(`.trip-events`);
 
-render(tripControlsElement, createTripInfoTemplate(), `beforebegin`);
-render(tripMenuTitleElement, createPageMenuTemplate(), `afterend`);
-render(tripControlsElement, createTripFiltersTemplate());
-render(mainContentElement, createTripSortTemplate());
-render(mainContentElement, createEventsContainerTemplate());
+renderTemplate(tripControlsElement, createTripInfoTemplate(events), `beforebegin`);
+renderTemplate(tripMenuTitleElement, createPageMenuTemplate(), `afterend`);
+renderTemplate(tripControlsElement, createTripFiltersTemplate());
+renderTemplate(mainContentElement, createTripSortTemplate());
+renderTemplate(mainContentElement, createEventsContainerTemplate());
 
 const days = events
-.slice(1)
-.reduce((summ, currentEvent) => {
-  const currentDate = currentEvent.startDate.getDate();
-  const currentDay = summ[summ.length - 1];
-  const lastEvent = currentDay[0];
-  const lastEventDate = lastEvent.startDate.getDate();
+  .slice(1)
+  .reduce((summ, currentEvent) => {
+    const currentDate = currentEvent.startDate.getDate();
+    const currentDay = summ[summ.length - 1];
+    const lastEvent = currentDay[0];
+    const lastEventDate = lastEvent.startDate.getDate();
 
-  if (currentDate === lastEventDate) {
-    currentDay.push(currentEvent);
-  } else {
-    summ.push([currentEvent]);
-  }
+    if (currentDate === lastEventDate) {
+      currentDay.push(currentEvent);
+    } else {
+      summ.push([currentEvent]);
+    }
 
-  return summ;
-}, [[events[0]]]);
+    return summ;
+  }, [[events[0]]]);
 
 const daysContainerElement = mainContentElement.querySelector(`.trip-days`);
 
 days.forEach((day, index) => {
-  render(daysContainerElement, createDayTemplate(day, index));
+  renderTemplate(daysContainerElement, createDayTemplate(day, index));
 });
 
-const eventsContainerElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
+const daysElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
 
-eventsContainerElements.forEach((eventsContainerElement, index) => {
-  days[index]
-    .map((event) => {
-      render(eventsContainerElement, createEventTemplate(event));
-    });
+daysElements.forEach((daysElement, index) => {
+  days[index].map((event) => renderTemplate(daysElement, createEventTemplate(event)));
 });
 
-render(eventsContainerElements[0], createEventEditTemplate(), `afterbegin`);
+// render(daysElements[0], createEventEditTemplate(), `afterbegin`);

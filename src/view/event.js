@@ -9,12 +9,9 @@ const generateOptionsTemplate = (name, price) => {
 };
 
 const generateOptionsMarkup = (options) => {
-  if (options.length > 0) {
-    return options
-      .map(({name, price}) => generateOptionsTemplate(name, price))
-      .join(`\n`);
-  }
-  return ``;
+  return options.length > 0
+    ? options.map(({name, price}) => generateOptionsTemplate(name, price)).join(`\n`)
+    : ``;
 };
 
 const getImageName = (eventType) => {
@@ -27,9 +24,8 @@ const getImageName = (eventType) => {
 const getformatedHours = (date) => {
   const hours = (`0` + date.getHours()).slice(-2);
   const minutes = (`0` + date.getMinutes()).slice(-2);
-  const days = (date.toLocaleDateString());
 
-  return `__${days}__${hours}:${minutes}`;
+  return `${hours}:${minutes}`;
 };
 
 const getFormatedDatetime = (date) => {
@@ -51,6 +47,7 @@ const getDuration = (start, end) => {
   } else if (hours >= 1) {
     return ` ${hours}H ${minutes}M`;
   }
+
   return `${minutes}M`;
 };
 

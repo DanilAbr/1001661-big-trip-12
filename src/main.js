@@ -29,24 +29,24 @@ render(tripControlsElement, createTripFiltersTemplate());
 render(mainContentElement, createTripSortTemplate());
 render(mainContentElement, createEventsContainerTemplate());
 
-const daysContainerElement = mainContentElement.querySelector(`.trip-days`);
-
 const days = events
-  .slice(1)
-  .reduce((summ, currentEvent) => {
-    const currentDate = currentEvent.startDate.getDate();
-    const currentDay = summ[summ.length - 1];
-    const lastEvent = currentDay[0];
-    const lastEventDate = lastEvent.startDate.getDate();
+.slice(1)
+.reduce((summ, currentEvent) => {
+  const currentDate = currentEvent.startDate.getDate();
+  const currentDay = summ[summ.length - 1];
+  const lastEvent = currentDay[0];
+  const lastEventDate = lastEvent.startDate.getDate();
 
-    if (currentDate === lastEventDate) {
-      currentDay.push(currentEvent);
-    } else {
-      summ.push([currentEvent]);
-    }
+  if (currentDate === lastEventDate) {
+    currentDay.push(currentEvent);
+  } else {
+    summ.push([currentEvent]);
+  }
 
-    return summ;
-  }, [[events[0]]]);
+  return summ;
+}, [[events[0]]]);
+
+const daysContainerElement = mainContentElement.querySelector(`.trip-days`);
 
 days.forEach((day, index) => {
   render(daysContainerElement, createDayTemplate(day, index));
@@ -60,6 +60,5 @@ eventsContainerElements.forEach((eventsContainerElement, index) => {
       render(eventsContainerElement, createEventTemplate(event));
     });
 });
-
 
 render(eventsContainerElements[0], createEventEditTemplate(), `afterbegin`);

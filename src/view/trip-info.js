@@ -70,6 +70,14 @@ const createTripInfoTemplate = (events) => {
           </section>`;
 };
 
+const createNoEventTripInfoTemplate = () => {
+  return `<section class="trip-main__trip-info  trip-info">
+            <p class="trip-info__cost">
+              Total: &euro;&nbsp;<span class="trip-info__cost-value">0</span>
+            </p>
+          </section>`;
+};
+
 export default class Info {
   constructor(events) {
     this._events = events;
@@ -77,7 +85,11 @@ export default class Info {
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._events);
+    if (this._events.length !== 0) {
+      return createTripInfoTemplate(this._events);
+    } else {
+      return createNoEventTripInfoTemplate(this._events);
+    }
   }
 
   getElement() {

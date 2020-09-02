@@ -6,6 +6,7 @@ import EventsContainer from './view/events-container.js';
 import DayView from './view/day.js';
 import EventView from './view/event.js';
 import EventEditView from './view/event-edit.js';
+import NoEventsView from "./view/no-events.js";
 import {renderElement} from './util.js';
 import {generateEvent} from './mock/event.js';
 import {EVENTS_COUNT, RenderPosition} from './const.js';
@@ -71,15 +72,20 @@ const mainContainerElement = document.querySelector(`.trip-events`);
 renderElement(headerElement, new InfoView(events).getElement(), RenderPosition.AFTERBEGIN);
 renderElement(controlsElement, new PageMenuView().getElement(), RenderPosition.AFTERBEGIN);
 renderElement(controlsElement, new FiltersView().getElement(), RenderPosition.BEFOREEND);
-renderElement(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
 renderElement(mainContainerElement, new EventsContainer().getElement(), RenderPosition.BEFOREEND);
 
 const daysContainerElement = mainContainerElement.querySelector(`.trip-days`);
 
-days.forEach((day, index) =>
-  renderElement(daysContainerElement, new DayView(day, index).getElement(), RenderPosition.BEFOREEND));
+if (events.length === 0) {
+  renderElement(daysContainerElement, new NoEventsView().getElement(), RenderPosition.BEFOREEND);
+} else {
+  renderElement(mainContainerElement, new SortView().getElement(), RenderPosition.AFTERBEGIN);
 
-const daysElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
+  days.forEach((day, index) =>
+    renderElement(daysContainerElement, new DayView(day, index).getElement(), RenderPosition.BEFOREEND));
 
-daysElements.forEach((daysElement, index) =>
-  days[index].map((event) => renderEvent(daysElement, event)));
+  const daysElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
+
+  daysElements.forEach((daysElement, index) =>
+    days[index].map((event) => renderEvent(daysElement, event)));
+}

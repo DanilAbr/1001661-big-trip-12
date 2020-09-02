@@ -1,4 +1,4 @@
-const EVENTS_COUNT = 7;
+const EVENTS_COUNT = 0;
 
 const cities = [`Moscow`, `Barcelona`, `Buenos Aires`, `Los Angeles`];
 const eventTypes = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check`, `Sightseeing`, `Restaurant`];

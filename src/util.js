@@ -25,10 +25,6 @@ const renderElement = (container, element, position) => {
   }
 };
 
-const renderTemplate = (container, template, position = `beforeend`) => {
-  return container.insertAdjacentHTML(position, template);
-};
-
 const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
@@ -36,12 +32,16 @@ const createElement = (template) => {
   return newElement.firstChild;
 };
 
-const getRandomArrayItem = (array) => {
-  return array[Math.floor(Math.random() * array.length)];
-};
+const getRandomArrayItem = (array) =>
+  array[Math.floor(Math.random() * array.length)];
 
-const getRandomBoolean = () => {
-  return Math.random() > 0.5;
-};
+const getRandomBoolean = () => Math.random() > 0.5;
 
-export {renderTemplate, getRandomArrayItem, getRandomInteger, getRandomBoolean, humanizeDate};
+export {
+  renderElement,
+  createElement,
+  getRandomArrayItem,
+  getRandomInteger,
+  getRandomBoolean,
+  humanizeDate
+};

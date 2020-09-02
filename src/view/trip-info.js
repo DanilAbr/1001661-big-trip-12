@@ -1,4 +1,4 @@
-import {humanizeDate} from '../util.js';
+import {humanizeDate, createElement} from '../util.js';
 
 const getFormatedTotalPeriod = (firstDate, lastDate) => {
   const formatedFirstDate = humanizeDate(firstDate);
@@ -58,16 +58,37 @@ const createTripInfoTemplate = (events) => {
   const totalPrice = getTotalPrice(events);
 
   return `<section class="trip-main__trip-info  trip-info">
-    <div class="trip-info__main">
-      <h1 class="trip-info__title">${mainWay}</h1>
+            <div class="trip-info__main">
+              <h1 class="trip-info__title">${mainWay}</h1>
 
-      <p class="trip-info__dates">${totalPeriod}</p>
-    </div>
+              <p class="trip-info__dates">${totalPeriod}</p>
+            </div>
 
-    <p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
-    </p>
-  </section>`;
+            <p class="trip-info__cost">
+              Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
+            </p>
+          </section>`;
 };
 
-export {createTripInfoTemplate};
+export default class Info {
+  constructor(events) {
+    this._events = events;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

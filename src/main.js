@@ -1,33 +1,19 @@
-import {createTripInfoTemplate} from './view/trip-info.js';
-import {createPageMenuTemplate} from './view/page-menu.js';
-import {createTripFiltersTemplate} from './view/trip-filters.js';
-import {createTripSortTemplate} from './view/trip-sort.js';
-import {createEventsContainerTemplate} from './view/events-container.js';
-import {createDayTemplate} from './view/day.js';
-// import {createEventEditTemplate} from './view/event-edit.js';
-import {createEventTemplate} from './view/event.js';
-import {renderTemplate} from './util.js';
+import InfoView from './view/trip-info.js';
+import PageMenuView from './view/menu.js';
+import FiltersView from './view/filters.js';
+import SortView from './view/sort.js';
+import EventsContainer from './view/events-container.js';
+import DayView from './view/day.js';
+import EventView from './view/event.js';
+import EventEditView from './view/event-edit.js';
+import {renderElement} from './util.js';
 import {generateEvent} from './mock/event.js';
-import {EVENTS_COUNT} from './const.js';
+import {EVENTS_COUNT, RenderPosition} from './const.js';
 
 const events = new Array(EVENTS_COUNT)
-  .fill()
+  .fill(``)
   .map(generateEvent)
-  .sort((a, b) => {
-    return a.startDate.getTime() - b.startDate.getTime();
-  });
-
-const pageHeaderElement = document.querySelector(`.page-header`);
-const pageMainElement = document.querySelector(`.page-main`);
-const tripControlsElement = pageHeaderElement.querySelector(`.trip-controls`);
-const tripMenuTitleElement = tripControlsElement.querySelector(`h2`);
-const mainContentElement = pageMainElement.querySelector(`.trip-events`);
-
-renderTemplate(tripControlsElement, createTripInfoTemplate(events), `beforebegin`);
-renderTemplate(tripMenuTitleElement, createPageMenuTemplate(), `afterend`);
-renderTemplate(tripControlsElement, createTripFiltersTemplate());
-renderTemplate(mainContentElement, createTripSortTemplate());
-renderTemplate(mainContentElement, createEventsContainerTemplate());
+  .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
 
 const days = events
   .slice(1)
@@ -46,16 +32,25 @@ const days = events
     return summ;
   }, [[events[0]]]);
 
-const daysContainerElement = mainContentElement.querySelector(`.trip-days`);
+const headerElement = document.querySelector(`.trip-main`);
+const controlsElement = headerElement.querySelector(`.trip-main__trip-controls`);
+const mainContainerElement = document.querySelector(`.trip-events`);
 
-days.forEach((day, index) => {
-  renderTemplate(daysContainerElement, createDayTemplate(day, index));
-});
+renderElement(headerElement, new InfoView(events).getElement(), RenderPosition.AFTERBEGIN);
+renderElement(controlsElement, new PageMenuView().getElement(), RenderPosition.AFTERBEGIN);
+renderElement(controlsElement, new FiltersView().getElement(), RenderPosition.BEFOREEND);
+renderElement(mainContainerElement, new SortView().getElement(), RenderPosition.BEFOREEND);
+renderElement(mainContainerElement, new EventsContainer().getElement(), RenderPosition.BEFOREEND);
+
+const daysContainerElement = mainContainerElement.querySelector(`.trip-days`);
+
+days.forEach((day, index) =>
+  renderElement(daysContainerElement, new DayView(day, index).getElement(), RenderPosition.BEFOREEND));
 
 const daysElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
 
-daysElements.forEach((daysElement, index) => {
-  days[index].map((event) => renderTemplate(daysElement, createEventTemplate(event)));
-});
+daysElements.forEach((daysElement, index) =>
+  days[index].map((event) =>
+    renderElement(daysElement, new EventView(event).getElement(), RenderPosition.BEFOREEND)));
 
-// render(daysElements[0], createEventEditTemplate(), `afterbegin`);
+renderElement(daysElements[0], new EventEditView().getElement(), RenderPosition.AFTERBEGIN);

@@ -15,6 +15,38 @@ const events = new Array(EVENTS_COUNT)
   .map(generateEvent)
   .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
 
+const renderEvent = (eventListElement, event) => {
+  const eventComponent = new EventView(event);
+  const eventEditComponent = new EventEditView(event);
+
+  const replaceEventToForm = () =>
+    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+
+  const replaceFormToEvent = () =>
+    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceFormToEvent();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceEventToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  eventEditComponent.getElement().querySelector(`.event--edit`).addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToEvent();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
+
+  renderElement(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
 const days = events
   .slice(1)
   .reduce((summ, currentEvent) => {
@@ -50,7 +82,4 @@ days.forEach((day, index) =>
 const daysElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
 
 daysElements.forEach((daysElement, index) =>
-  days[index].map((event) =>
-    renderElement(daysElement, new EventView(event).getElement(), RenderPosition.BEFOREEND)));
-
-renderElement(daysElements[0], new EventEditView().getElement(), RenderPosition.AFTERBEGIN);
+  days[index].map((event) => renderEvent(daysElement, event)));

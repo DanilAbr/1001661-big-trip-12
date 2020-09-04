@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {humanizeDate} from '../util.js';
+import {humanizeDate} from '../utils/event.js';
 
 const getDatetime = (date) => {
   const year = date.getFullYear();

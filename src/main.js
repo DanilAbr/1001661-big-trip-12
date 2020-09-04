@@ -7,9 +7,10 @@ import DayView from './view/day.js';
 import EventView from './view/event.js';
 import EventEditView from './view/event-edit.js';
 import NoEventsView from "./view/no-events.js";
-import {render} from './util.js';
+import {render, RenderPosition, replace} from './utils/render.js';
 import {generateEvent} from './mock/event.js';
-import {EVENTS_COUNT, RenderPosition} from './const.js';
+
+const EVENTS_COUNT = 10;
 
 const events = new Array(EVENTS_COUNT)
   .fill(``)
@@ -21,10 +22,10 @@ const renderEvent = (eventListElement, event) => {
   const eventEditComponent = new EventEditView(event);
 
   const replaceEventToForm = () =>
-    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
 
   const replaceFormToEvent = () =>
-    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
 
   const onEscKeyDown = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -45,12 +46,10 @@ const renderEvent = (eventListElement, event) => {
   };
 
   eventComponent.setRollupClickHandler(() => openEventEditForm());
-
   eventEditComponent.setFormSubmitHandler(() => closeEventEditForm());
-
   eventEditComponent.setFormRollupClickHandler(() => closeEventEditForm());
 
-  render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+  render(eventListElement, eventComponent, RenderPosition.BEFOREEND);
 };
 
 const days = events
@@ -74,20 +73,20 @@ const headerElement = document.querySelector(`.trip-main`);
 const controlsElement = headerElement.querySelector(`.trip-main__trip-controls`);
 const mainContainerElement = document.querySelector(`.trip-events`);
 
-render(headerElement, new InfoView(events).getElement(), RenderPosition.AFTERBEGIN);
-render(controlsElement, new PageMenuView().getElement(), RenderPosition.AFTERBEGIN);
-render(controlsElement, new FiltersView().getElement(), RenderPosition.BEFOREEND);
-render(mainContainerElement, new EventsContainer().getElement(), RenderPosition.BEFOREEND);
+render(controlsElement, new PageMenuView(), RenderPosition.AFTERBEGIN);
+render(headerElement, new InfoView(events), RenderPosition.AFTERBEGIN);
+render(controlsElement, new FiltersView(), RenderPosition.BEFOREEND);
+render(mainContainerElement, new EventsContainer(), RenderPosition.BEFOREEND);
 
 const daysContainerElement = mainContainerElement.querySelector(`.trip-days`);
 
 if (events.length === 0) {
-  render(daysContainerElement, new NoEventsView().getElement(), RenderPosition.BEFOREEND);
+  render(daysContainerElement, new NoEventsView(), RenderPosition.BEFOREEND);
 } else {
-  render(mainContainerElement, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+  render(mainContainerElement, new SortView(), RenderPosition.AFTERBEGIN);
 
   days.forEach((day, index) =>
-    render(daysContainerElement, new DayView(day, index).getElement(), RenderPosition.BEFOREEND));
+    render(daysContainerElement, new DayView(day, index), RenderPosition.BEFOREEND));
 
   const daysElements = daysContainerElement.querySelectorAll(`.trip-events__list`);
 

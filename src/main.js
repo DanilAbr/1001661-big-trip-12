@@ -34,15 +34,21 @@ const renderEvent = (eventListElement, event) => {
     }
   };
 
-  eventComponent.setRollupClickHandler(() => {
+  const openEventEditForm = () => {
     replaceEventToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
-  });
+  };
 
-  eventEditComponent.setFormSubmitHandler(() => {
+  const closeEventEditForm = () => {
     replaceFormToEvent();
     document.removeEventListener(`keydown`, onEscKeyDown);
-  });
+  };
+
+  eventComponent.setRollupClickHandler(() => openEventEditForm());
+
+  eventEditComponent.setFormSubmitHandler(() => closeEventEditForm());
+
+  eventEditComponent.setFormRollupClickHandler(() => closeEventEditForm());
 
   render(eventListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
 };

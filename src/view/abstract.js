@@ -1,4 +1,4 @@
-﻿import {createElement} from '../util.js';
+import {createElement} from '../util.js';
 
 export default class Abstract {
   constructor() {
@@ -15,7 +15,7 @@ export default class Abstract {
 
   getElement() {
     if (!this._element) {
-      this._element = createElement(this._getTemplate());
+      this._element = createElement(this.getTemplate());
     }
 
     return this._element;

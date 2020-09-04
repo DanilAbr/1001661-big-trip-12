@@ -1,4 +1,4 @@
-import {createElement} from "../util.js";
+import AbstractView from './abstract.js';
 
 const generateOptionsTemplate = (name, price) => {
   return `<li class="event__offer">
@@ -9,9 +9,11 @@ const generateOptionsTemplate = (name, price) => {
 };
 
 const generateOptionsMarkup = (options) => {
-  return options.length > 0
-    ? options.map(({name, price}) => generateOptionsTemplate(name, price)).join(`\n`)
-    : ``;
+  if (options.length > 0) {
+    return options.map(({name, price}) => generateOptionsTemplate(name, price)).join(`\n`);
+  } else {
+    return ``;
+  }
 };
 
 const getImageName = (eventType) => {
@@ -95,25 +97,13 @@ const createEventTemplate = (event) => {
           </li>`;
 };
 
-export default class Event {
+export default class Event extends AbstractView {
   constructor(event) {
-    this._element = null;
+    super();
     this._event = event;
   }
 
   getTemplate() {
     return createEventTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

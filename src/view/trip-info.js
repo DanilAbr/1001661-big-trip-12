@@ -1,4 +1,5 @@
-import {humanizeDate, createElement} from '../util.js';
+import AbstractView from './abstract.js';
+import {humanizeDate} from '../util.js';
 
 const getFormatedTotalPeriod = (firstDate, lastDate) => {
   const formatedFirstDate = humanizeDate(firstDate);
@@ -17,9 +18,7 @@ const getCenterCity = (events) => {
   let centerCity = events[1].city;
   let cities = [];
 
-  events.forEach((event) => {
-    cities.push(event.city);
-  });
+  events.forEach((event) => cities.push(event.city));
 
   if (cities.length > 3) {
     centerCity = `...`;
@@ -40,11 +39,10 @@ const getMainWay = (events) => {
 const getTotalPrice = (events) => {
   let eventsPrices = [];
 
-  events.forEach((event) => {
-    eventsPrices.push(event.price);
-  });
+  events.forEach((event) => eventsPrices.push(event.price));
 
-  const total = eventsPrices.reduce((accumulator, currentValue) => accumulator + currentValue);
+  const total = eventsPrices
+    .reduce((summ, currentPrice) => summ + currentPrice);
 
   return total;
 };
@@ -78,10 +76,10 @@ const createNoEventTripInfoTemplate = () => {
           </section>`;
 };
 
-export default class Info {
+export default class Info extends AbstractView {
   constructor(events) {
+    super();
     this._events = events;
-    this._element = null;
   }
 
   getTemplate() {
@@ -90,17 +88,5 @@ export default class Info {
     } else {
       return createNoEventTripInfoTemplate(this._events);
     }
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -7,7 +7,7 @@ const RenderPosition = {
 
 const render = (container, child, position) => {
   if (container instanceof Abstract) {
-    container = container.getEement();
+    container = container.getElement();
   }
 
   if (child instanceof Abstract) {

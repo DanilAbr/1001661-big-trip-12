@@ -177,7 +177,24 @@ const createEventEditTemplate = () => {
 };
 
 export default class EventEdit extends AbstractView {
+  constructor() {
+    super();
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+  }
+
+
   getTemplate() {
     return createEventEditTemplate();
+  }
+
+  _formSumbitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, this._formSubmitHandler);
   }
 }

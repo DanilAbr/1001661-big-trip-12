@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomInteger, getRandomBoolean} from './../util.js';
+import {getRandomArrayItem, getRandomInteger, getRandomBoolean} from '../utils/common.js';
 import {cities, eventTypes, optionsArray} from './../const.js';
 
 const generateStartDate = () => {

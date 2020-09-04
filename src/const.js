@@ -1,5 +1,3 @@
-const EVENTS_COUNT = 0;
-
 const cities = [`Moscow`, `Barcelona`, `Buenos Aires`, `Los Angeles`];
 const eventTypes = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check`, `Sightseeing`, `Restaurant`];
 const optionsArray = [{
@@ -22,9 +20,5 @@ const optionsArray = [{
   name: `Add breakfast`,
   price: `50`,
 }];
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-};
 
-export {EVENTS_COUNT, eventTypes, optionsArray, RenderPosition, cities};
+export {eventTypes, optionsArray, cities};

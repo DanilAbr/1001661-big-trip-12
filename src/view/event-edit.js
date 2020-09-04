@@ -1,4 +1,4 @@
-import {createElement} from "../util.js";
+import AbstractView from './abstract.js';
 
 const createEventEditTemplate = () => {
   return `<li class="trip-events__item">
@@ -176,24 +176,36 @@ const createEventEditTemplate = () => {
           </li>`;
 };
 
-export default class EventEdit {
+export default class EventEdit extends AbstractView {
   constructor() {
-    this._element = null;
+    super();
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
   }
+
 
   getTemplate() {
     return createEventEditTemplate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  _formRollupClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.formRollupClick();
+  }
+
+  setFormRollupClickHandler(callback) {
+    this._callback.formRollupClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._formRollupClickHandler);
   }
 }

@@ -14,7 +14,7 @@ const humanizeDate = (date) => {
   return `${month} ${day}`;
 };
 
-const renderElement = (container, element, position) => {
+const render = (container, element, position) => {
   switch (position) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -38,7 +38,7 @@ const getRandomArrayItem = (array) =>
 const getRandomBoolean = () => Math.random() > 0.5;
 
 export {
-  renderElement,
+  render,
   createElement,
   getRandomArrayItem,
   getRandomInteger,

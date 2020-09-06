@@ -21,4 +21,10 @@ const optionsArray = [{
   price: `50`,
 }];
 
-export {eventTypes, optionsArray, cities};
+const SortType = {
+  DEFAULT: `default`,
+  TIME: `time`,
+  PRICE: `price`
+};
+
+export {eventTypes, optionsArray, cities, SortType};

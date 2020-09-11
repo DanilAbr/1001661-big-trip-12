@@ -1,48 +1,49 @@
-import EventsContainerView from '../view/events-container.js';
-import SortView from '../view/sort.js';
-import DayView from '../view/day.js';
-import EventView from '../view/event.js';
-import EventEditView from '../view/event-edit.js';
-import NoEventsView from "../view/no-events.js";
-import {render, RenderPosition, replace} from '../utils/render.js';
-import {sortTime, sortPrice} from '../utils/event.js';
-import {SortType} from '../const.js';
+import DaysContainerView from '../view/days-container';
+import SortView from '../view/sort';
+import DayView from '../view/day';
+import DayInfoView from '../view/day-info';
+import EventView from '../view/event';
+import EventEditView from '../view/event-edit';
+import NoEventsView from '../view/no-events';
+import {render, RenderPosition, replace, remove} from '../utils/render';
+import {sortTime, sortPrice} from '../utils/event';
+import {SortType} from '../const';
 
 export default class Trip {
   constructor(TripContainer) {
     this._tripContainer = TripContainer;
     this._currentSortType = SortType.DEFAULT;
+    this._days = [];
 
-    this._sortComponent = new SortView();
-    this._eventsContainerComponent = new EventsContainerView();
-    this._dayComponent = new DayView();
-    this._noEventsComponent = new NoEventsView();
+    this._daysContainerComponent = new DaysContainerView();
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
 
-  init(tripEvents) {
-    this._tripEvents = tripEvents.slice();
-    this._sourcedTripEvents = tripEvents.slice();
+  init(events) {
+    this._events = events.slice();
+    this._sourcedEvents = events.slice();
 
     this._renderBoard();
   }
 
+
   _sortEvents(sortType) {
     switch (sortType) {
       case SortType.TIME:
-        this._tripEvents.sort(sortTime);
+        this._events.sort(sortTime);
         break;
       case SortType.PRICE:
-        this._tripEvents.sort(sortPrice);
+        this._events.sort(sortPrice);
         break;
       default:
-        this._tripEvents = this._sourcedTripEvents.slice();
+        this._events = this._sourcedEvents.slice();
     }
 
     this._currentSortType = sortType;
   }
+
 
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
@@ -51,50 +52,56 @@ export default class Trip {
 
     this._sortEvents(sortType);
     this._clearTaskList();
-    this._renderSort();
-    this._renderEventsContainer();
-    this._renderDays(this._tripEvents);
-    this._renderEvents(this._days);
+    this._renderBoard();
   }
 
 
-  _renderSort() {
+  _renderSort(sortType) {
+    this._sortComponent = new SortView(sortType);
+
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
 
-  _renderEventsContainer() {
-    render(this._tripContainer, this._eventsContainerComponent, RenderPosition.BEFOREEND);
+  _renderDaysContainer() {
+    render(this._tripContainer, this._daysContainerComponent, RenderPosition.BEFOREEND);
   }
 
+
+  _getDays(events) {
+    return events
+      .slice(1)
+      .reduce((summ, currentEvent) => {
+        const currentDate = currentEvent.startDate.getDate();
+        const currentDay = summ[summ.length - 1];
+        const lastEvent = currentDay[0];
+        const lastEventDate = lastEvent.startDate.getDate();
+
+        if (currentDate === lastEventDate) {
+          currentDay.push(currentEvent);
+        } else {
+          summ.push([currentEvent]);
+        }
+
+        return summ;
+      }, [[events[0]]]);
+  }
 
   _renderDays(events) {
-    const days = events
-    .slice(1)
-    .reduce((summ, currentEvent) => {
-      const currentDate = currentEvent.startDate.getDate();
-      const currentDay = summ[summ.length - 1];
-      const lastEvent = currentDay[0];
-      const lastEventDate = lastEvent.startDate.getDate();
+    this._days = this._getDays(events);
 
-      if (currentDate === lastEventDate) {
-        currentDay.push(currentEvent);
-      } else {
-        summ.push([currentEvent]);
-      }
+    this._days.forEach((day, index) => {
+      this._dayComponent = new DayView();
+      this._dayInfoComponent = new DayInfoView(day, index, this._currentSortType);
 
-      return summ;
-    }, [[events[0]]]);
-
-    this._days = days.slice();
-
-    days.forEach((day, index) =>
-      render(this._eventsContainerComponent, new DayView(day, index), RenderPosition.BEFOREEND));
+      render(this._daysContainerComponent, this._dayComponent, RenderPosition.BEFOREEND);
+      render(this._dayComponent, this._dayInfoComponent, RenderPosition.AFTERBEGIN);
+    });
   }
 
 
-  _renderEvent(daysElement, event) {
+  _renderEvent(eventsContainer, event) {
     const eventComponent = new EventView(event);
     const eventEditComponent = new EventEditView(event);
 
@@ -126,46 +133,38 @@ export default class Trip {
     eventEditComponent.setFormSubmitHandler(() => closeEventEditForm());
     eventEditComponent.setFormRollupClickHandler(() => closeEventEditForm());
 
-    render(daysElement, eventComponent, RenderPosition.BEFOREEND);
+    render(eventsContainer, eventComponent, RenderPosition.BEFOREEND);
   }
 
 
   _renderEvents(days) {
-    const daysElements = document.querySelectorAll(`.trip-events__list`);
+    const eventsContaners = this._daysContainerComponent.getElement().querySelectorAll(`.trip-events__list`);
 
-    daysElements.forEach((daysElement, index) => {
-      days[index].map((event) => this._renderEvent(daysElement, event));
-    });
-
-    if (this._currentSortType !== `default`) {
-      const dayContainers = document.querySelectorAll(`.day__info`);
-
-      dayContainers.forEach((dayContainer) => {
-        dayContainer.innerHTML = ``;
-      });
-    }
+    eventsContaners.forEach((eventsContainer, index) =>
+      days[index].map((event) => this._renderEvent(eventsContainer, event)));
   }
 
 
   _renderNoEvents() {
-    render(this._tripContainer, this._noEventsComponent, RenderPosition.BEFOREEND);
+    render(this._tripContainer, new NoEventsView(), RenderPosition.BEFOREEND);
   }
 
 
   _clearTaskList() {
-    this._eventsContainerComponent.getElement().innerHTML = ``;
+    remove(this._sortComponent);
+    remove(this._daysContainerComponent);
   }
 
 
   _renderBoard() {
-    if (this._tripEvents.length === 0) {
+    if (this._events.length === 0) {
       this._renderNoEvents();
       return;
     }
 
-    this._renderSort();
-    this._renderEventsContainer();
-    this._renderDays(this._tripEvents);
+    this._renderSort(this._currentSortType);
+    this._renderDaysContainer();
+    this._renderDays(this._events);
     this._renderEvents(this._days);
   }
 }

@@ -15,11 +15,10 @@ const events = new Array(EVENTS_COUNT)
 const headerElement = document.querySelector(`.trip-main`);
 const controlsElement = headerElement.querySelector(`.trip-main__trip-controls`);
 const mainContainerElement = document.querySelector(`.trip-events`);
-
-render(controlsElement, new PageMenuView(), RenderPosition.AFTERBEGIN);
-render(headerElement, new InfoView(events), RenderPosition.AFTERBEGIN);
-render(controlsElement, new FiltersView(), RenderPosition.BEFOREEND);
-
 const boardPresenter = new BoardPresenter(mainContainerElement);
+
+render(headerElement, new InfoView(events), RenderPosition.AFTERBEGIN);
+render(controlsElement, new PageMenuView(), RenderPosition.AFTERBEGIN);
+render(controlsElement, new FiltersView(), RenderPosition.BEFOREEND);
 
 boardPresenter.init(events);

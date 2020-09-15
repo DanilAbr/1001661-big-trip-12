@@ -5,10 +5,6 @@ const humanizeDate = (date) => {
   return `${month} ${day}`;
 };
 
-
-const formatedType = (type) => type.slice(0, 1).toUpperCase() + type.slice(1);
-
-
 const getFormatedHours = (date) => {
   const hours = (`0` + date.getHours()).slice(-2);
   const minutes = (`0` + date.getMinutes()).slice(-2);
@@ -16,14 +12,12 @@ const getFormatedHours = (date) => {
   return `${hours}:${minutes}`;
 };
 
-
 const getFormatedDate = (date, separator) => {
   const currentDate = new Date(date);
   const formatedDate = currentDate.toLocaleDateString().split(`.`).join(separator);
 
   return formatedDate;
 };
-
 
 const getWeightForNullTime = (dateA, dateB) => {
   if (dateA === null && dateB === null) {
@@ -64,4 +58,4 @@ const sortPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export {humanizeDate, getWeightForNullTime, sortTime, sortPrice, getFormatedHours, getFormatedDate, formatedType};
+export {humanizeDate, getWeightForNullTime, sortTime, sortPrice, getFormatedHours, getFormatedDate};

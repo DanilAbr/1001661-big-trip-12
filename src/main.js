@@ -1,11 +1,10 @@
-import InfoView from './view/trip-info.js';
-import PageMenuView from './view/menu.js';
-import FiltersView from './view/filters.js';
-import BoardPresenter from './presenter/trip.js';
-import {render, RenderPosition} from './utils/render.js';
-import {generateEvent} from './mock/event.js';
-
-const EVENTS_COUNT = 10;
+import InfoView from './view/trip-info';
+import PageMenuView from './view/menu';
+import FiltersView from './view/filters';
+import BoardPresenter from './presenter/trip';
+import {render, RenderPosition} from './utils/render';
+import {generateEvent} from './mock/event';
+import {EVENTS_COUNT} from './const';
 
 const events = new Array(EVENTS_COUNT)
   .fill()

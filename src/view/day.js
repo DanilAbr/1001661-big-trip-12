@@ -1,4 +1,4 @@
-﻿import Abstract from '../view/abstract';
+import Abstract from '../view/abstract';
 
 const createDayTemplate = () => {
   return (

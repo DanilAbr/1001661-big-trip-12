@@ -1,5 +1,6 @@
 import AbstractView from './abstract';
-import {getFormatedHours, getFormatedDate, formatedType} from '../utils/event';
+import {getFormatedHours, getFormatedDate} from '../utils/event';
+import {eventType} from '../const';
 
 const getFormatedDatetime = (date) => {
   const formatedDate = getFormatedDate(date, `-`);
@@ -35,10 +36,29 @@ const getDuration = (start, end) => {
   return `${minutes}M`;
 };
 
+
+const getPlaceholder = (type) => { // Ask Не слишком замудрённо?
+  const typeValues = Object.values(eventType);
+  const typeKeys = Object.keys(eventType);
+  let placeholder;
+
+  typeValues.forEach((typeValue, index) => {
+    const arrayValues = Object.values(typeValue);
+
+    arrayValues.forEach((value) => {
+      if (value === type) {
+        placeholder = typeKeys[index] === `stopping` ? `in` : `to`;
+      }
+    });
+  });
+
+  return placeholder;
+};
+
 const createEventTemplate = (event) => {
   const {city, type, price, startDate, endDate, options} = event;
 
-  const eventType = formatedType(type);
+  const placeholder = getPlaceholder(type);
   const startHours = getFormatedHours(startDate);
   const endHours = getFormatedHours(endDate);
   const startDatetime = getFormatedDatetime(startDate);
@@ -50,9 +70,9 @@ const createEventTemplate = (event) => {
     `<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType}.png" alt="${eventType} icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>
-        <h3 class="event__title">${eventType} to ${city}</h3>
+        <h3 class="event__title">${type} ${placeholder} ${city}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

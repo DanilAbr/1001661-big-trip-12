@@ -2,10 +2,9 @@ import DaysContainerView from '../view/days-container';
 import SortView from '../view/sort';
 import DayView from '../view/day';
 import DayInfoView from '../view/day-info';
-import EventView from '../view/event';
-import EventEditView from '../view/event-edit';
 import NoEventsView from '../view/no-events';
-import {render, RenderPosition, replace, remove} from '../utils/render';
+import {render, RenderPosition, remove} from '../utils/render';
+import EventPresenter from './event';
 import {sortTime, sortPrice} from '../utils/event';
 import {SortType} from '../const';
 
@@ -20,14 +19,12 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-
   init(events) {
     this._events = events.slice();
     this._sourcedEvents = events.slice();
 
     this._renderBoard();
   }
-
 
   _sortEvents(sortType) {
     switch (sortType) {
@@ -44,7 +41,6 @@ export default class Trip {
     this._currentSortType = sortType;
   }
 
-
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
@@ -54,7 +50,6 @@ export default class Trip {
     this._clearTaskList();
     this._renderBoard();
   }
-
 
   _renderSort(sortType) {
     this._sortComponent = new SortView(sortType);
@@ -67,7 +62,6 @@ export default class Trip {
   _renderDaysContainer() {
     render(this._tripContainer, this._daysContainerComponent, RenderPosition.BEFOREEND);
   }
-
 
   _getDays(events) {
     return events
@@ -100,42 +94,10 @@ export default class Trip {
     });
   }
 
-
   _renderEvent(eventsContainer, event) {
-    const eventComponent = new EventView(event);
-    const eventEditComponent = new EventEditView(event);
-
-    const replaceEventToForm = () =>
-      replace(eventEditComponent, eventComponent);
-
-    const replaceFormToEvent = () =>
-      replace(eventComponent, eventEditComponent);
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToEvent();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    const openEventEditForm = () => {
-      replaceEventToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const closeEventEditForm = () => {
-      replaceFormToEvent();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    eventComponent.setRollupClickHandler(() => openEventEditForm());
-    eventEditComponent.setFormSubmitHandler(() => closeEventEditForm());
-    eventEditComponent.setFormRollupClickHandler(() => closeEventEditForm());
-
-    render(eventsContainer, eventComponent, RenderPosition.BEFOREEND);
+    const eventPresenter = new EventPresenter(eventsContainer);
+    eventPresenter.init(event);
   }
-
 
   _renderEvents(days) {
     const eventsContaners = this._daysContainerComponent.getElement().querySelectorAll(`.trip-events__list`);
@@ -144,17 +106,14 @@ export default class Trip {
       days[index].map((event) => this._renderEvent(eventsContainer, event)));
   }
 
-
   _renderNoEvents() {
     render(this._tripContainer, new NoEventsView(), RenderPosition.BEFOREEND);
   }
-
 
   _clearTaskList() {
     remove(this._sortComponent);
     remove(this._daysContainerComponent);
   }
-
 
   _renderBoard() {
     if (this._events.length === 0) {

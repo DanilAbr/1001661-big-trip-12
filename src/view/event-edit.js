@@ -1,7 +1,7 @@
 import AbstractView from './abstract';
-import {formatedType, getFormatedHours, getFormatedDate} from '../utils/event.js';
+import {getFormatedHours, getFormatedDate} from '../utils/event';
 
-const getFormFormatedDatetime = (date) => {
+const getFormatedDatetime = (date) => {
   const formatedDate = getFormatedDate(date, `/`).slice(0, -2);
   const formatedTime = getFormatedHours(date);
 
@@ -34,9 +34,8 @@ const generateOptionsTemplate = (options) => {
 const createEventEditTemplate = (event) => {
   const {city, type, price, startDate, endDate, options} = event;
 
-  const eventType = formatedType(type);
-  const startDateTime = getFormFormatedDatetime(startDate);
-  const endDatetime = getFormFormatedDatetime(endDate);
+  const startDateTime = getFormatedDatetime(startDate);
+  const endDatetime = getFormatedDatetime(endDate);
   const optionsMarkup = generateOptionsTemplate(options);
 
   return (
@@ -46,7 +45,7 @@ const createEventEditTemplate = (event) => {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${eventType}.png" alt=${eventType}>
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt=${type}>
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -113,9 +112,9 @@ const createEventEditTemplate = (event) => {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${eventType} to
+              ${type} to
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${city} list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
             <datalist id="destination-list-1">
               <option value="Amsterdam"></option>
               <option value="Geneva"></option>
@@ -127,12 +126,12 @@ const createEventEditTemplate = (event) => {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${startDateTime}>
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateTime}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${endDatetime}>
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDatetime}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -140,7 +139,7 @@ const createEventEditTemplate = (event) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${price}>
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

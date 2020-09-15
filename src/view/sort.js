@@ -7,12 +7,14 @@ const createSortTemplate = (sortType) => {
       <span class="trip-sort__item  trip-sort__item--day">${sortType === `default` ? `Day` : ``}</span>
 
       <div class="trip-sort__item  trip-sort__item--event">
-        <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event" checked>
+        <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event"
+          ${sortType === `default` ? `checked` : ``}>
         <label class="trip-sort__btn" for="sort-event" data-sort-type=${SortType.DEFAULT}>Event</label>
       </div>
 
       <div class="trip-sort__item  trip-sort__item--time">
-        <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time">
+        <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-time"
+          ${sortType === `time` ? `checked` : ``}>
         <label class="trip-sort__btn" for="sort-time" data-sort-type=${SortType.TIME}>
           Time
           <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">
@@ -22,7 +24,8 @@ const createSortTemplate = (sortType) => {
       </div>
 
       <div class="trip-sort__item  trip-sort__item--price">
-        <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price">
+        <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-price"
+          ${sortType === `price` ? `checked` : ``}>
         <label class="trip-sort__btn" for="sort-price" data-sort-type=${SortType.PRICE}>
           Price
           <svg class="trip-sort__direction-icon" width="8" height="10" viewBox="0 0 8 10">

@@ -5,9 +5,8 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const getRandomArrayItem = (array) =>
-  array[Math.floor(Math.random() * array.length)];
-
+const getRandomArrayItem = (array) => array[Math.floor(Math.random() * array.length)];
+const getRandomObjectItem = (obj) => obj[Object.keys(obj)[Math.floor(Math.random() * Object.keys(obj).length)]];
 const getRandomBoolean = () => Math.random() > 0.5;
 
-export {getRandomInteger, getRandomArrayItem, getRandomBoolean};
+export {getRandomInteger, getRandomArrayItem, getRandomBoolean, getRandomObjectItem};

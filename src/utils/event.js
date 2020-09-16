@@ -1,8 +1,24 @@
+import {eventTypes} from '../const';
+
 const humanizeDate = (date) => {
   const month = date.toLocaleString(`en-US`, {month: `short`});
   const day = date.getDate();
 
   return `${month} ${day}`;
+};
+
+const getFormatedHours = (date) => {
+  const hours = (`0` + date.getHours()).slice(-2);
+  const minutes = (`0` + date.getMinutes()).slice(-2);
+
+  return `${hours}:${minutes}`;
+};
+
+const getFormatedDate = (date, separator) => {
+  const currentDate = new Date(date);
+  const formatedDate = currentDate.toLocaleDateString().split(`.`).join(separator);
+
+  return formatedDate;
 };
 
 const getWeightForNullTime = (dateA, dateB) => {
@@ -44,4 +60,6 @@ const sortPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export {humanizeDate, getWeightForNullTime, sortTime, sortPrice};
+const getPlaceholder = (type) => eventTypes.drive.includes(type) ? `to` : `in`;
+
+export {humanizeDate, getWeightForNullTime, sortTime, sortPrice, getFormatedHours, getFormatedDate, getPlaceholder};

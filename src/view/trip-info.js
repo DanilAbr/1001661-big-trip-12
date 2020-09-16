@@ -1,5 +1,5 @@
-import AbstractView from './abstract.js';
-import {humanizeDate} from '../utils/event.js';
+import AbstractView from './abstract';
+import {humanizeDate} from '../utils/event';
 
 const getFormatedTotalPeriod = (firstDate, lastDate) => {
   const formatedFirstDate = humanizeDate(firstDate);
@@ -7,73 +7,63 @@ const getFormatedTotalPeriod = (firstDate, lastDate) => {
   const firstEventMonth = firstDate.getMonth();
   const lastEventMonth = lastDate.getMonth();
 
-  formatedLastDate = (firstEventMonth === lastEventMonth)
+  formatedLastDate = firstEventMonth === lastEventMonth
     ? formatedLastDate.slice(-2)
     : formatedLastDate;
 
   return `${formatedFirstDate}&nbsp;&mdash;&nbsp;${formatedLastDate}`;
 };
 
-const getCenterCity = (events) => {
-  let centerCity = events[1].city;
-  let cities = [];
 
-  events.forEach((event) => cities.push(event.city));
-
-  if (cities.length > 3) {
-    centerCity = `...`;
-  }
-
-  return centerCity;
-};
-
-
-const getMainWay = (events) => {
-  const firstCity = events[0].city;
-  const lastCity = events[events.length - 1].city;
-  const centerCity = getCenterCity(events);
-
-  return `${firstCity} &mdash; ${centerCity} &mdash; ${lastCity}`;
-};
+const getMainWay = (events) =>
+  `${events[0].city}
+  ${events.length > 1 ? `&mdash; ` : ``}
+  ${events.length === 3 ? `${events[1].city} &mdash;` : ``}
+  ${events.length > 3 ? `... &mdash;` : ``}
+  ${events.length > 1 ? events[events.length - 1].city : ``}`;
 
 const getTotalPrice = (events) => {
-  let eventsPrices = [];
+  let total = 0;
 
-  events.forEach((event) => eventsPrices.push(event.price));
+  events.map(({options, price}) => {
+    options.forEach((option) => {
+      total += +option.price;
+    });
 
-  const total = eventsPrices
-    .reduce((summ, currentPrice) => summ + currentPrice);
+    total += price;
+  });
 
   return total;
 };
 
 const createTripInfoTemplate = (events) => {
-  const firstEventDate = events[0].startDate;
-  const lastEventDate = events[events.length - 1].startDate;
+  let totalPeriod;
+  let mainWay;
 
-  const totalPeriod = getFormatedTotalPeriod(firstEventDate, lastEventDate);
-  const mainWay = getMainWay(events);
-  const totalPrice = getTotalPrice(events);
+  if (events.length !== 0) {
+    const firstEventDate = events[0].startDate;
+    const lastEventDate = events[events.length - 1].startDate;
 
-  return `<section class="trip-main__trip-info  trip-info">
-            <div class="trip-info__main">
-              <h1 class="trip-info__title">${mainWay}</h1>
+    totalPeriod = getFormatedTotalPeriod(firstEventDate, lastEventDate);
+    mainWay = getMainWay(events);
+  }
 
-              <p class="trip-info__dates">${totalPeriod}</p>
-            </div>
+  const totalPrice = events.length !== 0 ? getTotalPrice(events) : `0`;
 
-            <p class="trip-info__cost">
-              Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
-            </p>
-          </section>`;
-};
+  return (
+    `<section class="trip-main__trip-info  trip-info">
+      ${events.length !== 0
+      ? `<div class="trip-info__main">
+          <h1 class="trip-info__title">${mainWay}</h1>
 
-const createNoEventTripInfoTemplate = () => {
-  return `<section class="trip-main__trip-info  trip-info">
-            <p class="trip-info__cost">
-              Total: &euro;&nbsp;<span class="trip-info__cost-value">0</span>
-            </p>
-          </section>`;
+          <p class="trip-info__dates">${totalPeriod}</p>
+        </div>`
+      : ``}
+      <p class="trip-info__cost">
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
+      </p>
+    </section>`
+  );
 };
 
 export default class Info extends AbstractView {
@@ -83,10 +73,6 @@ export default class Info extends AbstractView {
   }
 
   getTemplate() {
-    if (this._events.length !== 0) {
-      return createTripInfoTemplate(this._events);
-    } else {
-      return createNoEventTripInfoTemplate(this._events);
-    }
+    return createTripInfoTemplate(this._events);
   }
 }

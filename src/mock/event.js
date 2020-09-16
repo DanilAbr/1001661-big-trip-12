@@ -1,7 +1,7 @@
-import {getRandomArrayItem, getRandomInteger, getRandomBoolean} from '../utils/common.js';
-import {cities, eventTypes, optionsArray} from './../const.js';
+import {getRandomArrayItem, getRandomInteger, getRandomBoolean, getRandomObjectItem} from '../utils/common';
+import {cities, eventTypes, optionsArray} from './../const';
 
-const generateStartDate = () => {
+const getStartDate = () => {
   const maxGap = 1000 * 60 * 60 * 24 * 7;
   const randomGap = getRandomInteger(-maxGap, maxGap);
 
@@ -11,7 +11,7 @@ const generateStartDate = () => {
   return currentDate;
 };
 
-const generateEndDate = (date) => {
+const getEndDate = (date) => {
   const currentDate = new Date(date);
   const minGap = 1000 * 60 * 10;
   const maxGap = 1000 * 60 * 60 * 48;
@@ -22,37 +22,28 @@ const generateEndDate = (date) => {
   return currentDate;
 };
 
-const generateOptions = (options) => {
-  return options.filter(() => getRandomBoolean());
-};
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+const getOptions = (options) => options.filter(() => getRandomBoolean());
 
-const getRandomInfo = () => {
-  const randomSentences = [];
-  const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
-
-  const sentences = text.slice(0, -1).split(`. `);
-  sentences.map((sentence) => getRandomBoolean() ? randomSentences.push(sentence) : ``);
-
-  return randomSentences.join(`. `) + `.`;
-};
+const getRandomInfo = () =>
+  `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`
+    .slice(0, -1).split(`. `)
+    .filter(() => getRandomBoolean())
+    .join(`. `) + `.`;
 
 const generateEvent = () => {
-  const type = getRandomArrayItem(eventTypes);
-  const city = getRandomArrayItem(cities);
-  const options = generateOptions(optionsArray);
-  const price = getRandomInteger(10, 10000);
-  const startDate = generateStartDate();
-  const endDate = generateEndDate(startDate);
-  const info = getRandomInfo();
+  const startDate = getStartDate();
 
   return {
-    type,
-    city,
-    options,
-    price,
+    id: generateId(),
+    isFavorite: getRandomBoolean(),
+    type: getRandomArrayItem(getRandomObjectItem(eventTypes)),
+    city: getRandomArrayItem(cities),
+    options: getOptions(optionsArray),
+    price: getRandomInteger(10, 1000),
     startDate,
-    endDate,
-    info,
+    endDate: getEndDate(startDate),
+    info: getRandomInfo(),
     photos: `http://picsum.photos/248/152?r=${Math.random()}`,
   };
 };

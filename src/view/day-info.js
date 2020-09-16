@@ -1,9 +1,9 @@
 import AbstractView from './abstract';
-import {humanizeDate, getFormatedDate} from '../utils/event';
+import {formatEventDate, getFormatedDate} from '../utils/event';
 
 const createDayTemplate = (day, index, sortType) => {
   const dayNumber = index + 1;
-  const date = humanizeDate(day[0].startDate);
+  const date = formatEventDate(day[0].startDate);
   const datetime = getFormatedDate(day[0].startDate, `-`);
 
   return (

@@ -1,9 +1,9 @@
 import AbstractView from './abstract';
-import {humanizeDate} from '../utils/event';
+import {formatEventDate} from '../utils/event';
 
 const getFormatedTotalPeriod = (firstDate, lastDate) => {
-  const formatedFirstDate = humanizeDate(firstDate);
-  let formatedLastDate = humanizeDate(lastDate);
+  const formatedFirstDate = formatEventDate(firstDate);
+  let formatedLastDate = formatEventDate(lastDate);
   const firstEventMonth = firstDate.getMonth();
   const lastEventMonth = lastDate.getMonth();
 

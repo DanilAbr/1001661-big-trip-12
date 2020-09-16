@@ -15,28 +15,22 @@ const getFormatedTotalPeriod = (firstDate, lastDate) => {
 };
 
 
-const getMainWay = (events) => {
-  const firstCity = events[0].city;
-  const lastCity = events[events.length - 1].city;
-
-  return `${firstCity}
-          ${events.length > 1 ? `&mdash; ` : ``}
-          ${events.length === 3 ? `${events[1].city} &mdash;` : ``}
-          ${events.length > 3 ? `... &mdash;` : ``}
-          ${events.length > 1 ? lastCity : ``}`;
-};
+const getMainWay = (events) =>
+  `${events[0].city}
+  ${events.length > 1 ? `&mdash; ` : ``}
+  ${events.length === 3 ? `${events[1].city} &mdash;` : ``}
+  ${events.length > 3 ? `... &mdash;` : ``}
+  ${events.length > 1 ? events[events.length - 1].city : ``}`;
 
 const getTotalPrice = (events) => {
   let total = 0;
 
-  events.map((event) => {
-    const currentOptions = event.options;
-
-    currentOptions.forEach((option) => {
+  events.map(({options, price}) => {
+    options.forEach((option) => {
       total += +option.price;
     });
 
-    total += event.price;
+    total += price;
   });
 
   return total;

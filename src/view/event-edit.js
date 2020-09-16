@@ -1,19 +1,13 @@
-import AbstractView from './abstract';
-import {getFormatedHours, getFormatedDate} from '../utils/event';
+import SmartView from './smart';
+import {getFormatedHours, getFormatedDate, getPlaceholder} from '../utils/event';
+import {eventTypes} from '../const';
+import {capitalizeFirstLetter} from '../utils/common';
 
-const getFormatedDatetime = (date) => {
-  const formatedDate = getFormatedDate(date, `/`).slice(0, -2);
-  const formatedTime = getFormatedHours(date);
+const getFormatedDatetime = (date) =>
+  `${getFormatedDate(date, `/`).slice(0, -2)} ${ getFormatedHours(date)}`;
 
-  return `${formatedDate} ${formatedTime}`;
-};
-
-const generateOptionsTemplate = (options) => {
-  if (options.length < 0) {
-    return ``;
-  }
-
-  return options.map(({name, price}, index) => (
+const getOptionsTemplate = (options) =>
+  options.length < 0 ? `` : options.map(({name, price}, index) => (
     `<div class="event__offer-selector">
       <input
         class="event__offer-checkbox  visually-hidden"
@@ -29,14 +23,36 @@ const generateOptionsTemplate = (options) => {
       </label>
     </div>`
   )).join(`\n`);
-};
 
-const createEventEditTemplate = (event) => {
-  const {city, type, price, startDate, endDate, options} = event;
+const createTransferListTemplate = () =>
+  eventTypes.drive.length < 0 ? `` : eventTypes.drive.map((type) => (
+    `<div class="event__type-item">
+      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
+    </div>`
+  )).join(`\n`);
+
+const createActivityListTemplate = () =>
+  eventTypes.stopping.length < 0 ? `` : eventTypes.stopping.map((type) => (
+    `<div class="event__type-item">
+      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
+    </div>`)).join(`\n`);
+
+const createCitiesDatalist = (cities) =>
+  cities.length < 0 ? `` : cities.map((city) =>
+    `<option value="${city}"></option>`).join(`\n`);
+
+const createEventEditTemplate = (event, cities) => {
+  const {city, type, price, startDate, endDate, options, isFavorite} = event;
 
   const startDateTime = getFormatedDatetime(startDate);
   const endDatetime = getFormatedDatetime(endDate);
-  const optionsMarkup = generateOptionsTemplate(options);
+  const optionsMarkup = getOptionsTemplate(options);
+  const transferTypesList = createTransferListTemplate();
+  const activityTypesList = createActivityListTemplate();
+  const citiesDatalist = createCitiesDatalist(cities);
+  const eventLabel = `${capitalizeFirstLetter(type)} ${getPlaceholder(type)}`;
 
   return (
     `<li class="trip-events__item">
@@ -52,73 +68,23 @@ const createEventEditTemplate = (event) => {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Transfer</legend>
-
-                <div class="event__type-item">
-                  <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-                  <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-                  <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-                  <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-                  <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
-                  <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-                  <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-                  <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-                </div>
+                ${transferTypesList}
               </fieldset>
 
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Activity</legend>
-
-                <div class="event__type-item">
-                  <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-                  <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-                  <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-                </div>
-
-                <div class="event__type-item">
-                  <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-                  <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-                </div>
+                ${activityTypesList}
               </fieldset>
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${type} to
+              ${eventLabel}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              ${citiesDatalist}
             </datalist>
           </div>
 
@@ -145,7 +111,7 @@ const createEventEditTemplate = (event) => {
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -172,29 +138,49 @@ const createEventEditTemplate = (event) => {
   );
 };
 
-export default class EventEdit extends AbstractView {
-  constructor(event) {
+export default class EventEdit extends SmartView {
+  constructor(event, cities) {
     super();
 
-    this._event = event;
+    this._cities = cities;
+    this._data = EventEdit.parseEventToData(event);
 
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._typeInputHandler = this._typeInputHandler.bind(this);
+    this._cityInputHandler = this._cityInputHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
+  reset(event) {
+    this.updateData(
+        EventEdit.parseEventToData(event)
+    );
+  }
 
   getTemplate() {
-    return createEventEditTemplate(this._event);
+    return createEventEditTemplate(this._data, this._cities);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormRollupClickHandler(this._callback.formRollupClick);
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
+    this.getElement().querySelector(`.event__input--price`).addEventListener(`input`, this._priceInputHandler);
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeInputHandler);
+    this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityInputHandler);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
-  }
-
-  setFormSubmitHandler(callback) {
-    this._callback.formSubmit = callback;
-    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, this._formSubmitHandler);
+    this._callback.formSubmit(this._data);
   }
 
   _formRollupClickHandler(evt) {
@@ -202,8 +188,37 @@ export default class EventEdit extends AbstractView {
     this._callback.formRollupClick();
   }
 
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this.updateData({isFavorite: !this._data.isFavorite}, false);
+  }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({price: evt.target.value}, true);
+  }
+
+  _typeInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({type: evt.target.value}, false);
+  }
+
+  _cityInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({city: evt.target.value}, true);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, this._formSubmitHandler);
+  }
+
   setFormRollupClickHandler(callback) {
     this._callback.formRollupClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._formRollupClickHandler);
+  }
+
+  static parseEventToData(event) {
+    return Object.assign({}, event);
   }
 }

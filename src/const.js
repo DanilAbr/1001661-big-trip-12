@@ -1,21 +1,9 @@
 const EVENTS_COUNT = 10;
 
 const cities = [`Moscow`, `Barcelona`, `Buenos Aires`, `Los Angeles`];
-const eventType = {
-  stopping: {
-    check: `Check-in`, // Ask ???
-    sightseeing: `Sightseeing`,
-    restaurant: `Restaurant`
-  },
-  drive: {
-    taxi: `Taxi`,
-    bus: `Bus`,
-    train: `Train`,
-    ship: `Ship`,
-    transport: `Transport`,
-    drive: `Drive`,
-    flight: `Flight`
-  }
+const eventTypes = {
+  stopping: [`check-in`, `sightseeing`, `restaurant`],
+  drive: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`]
 };
 
 const optionsArray = [{
@@ -45,4 +33,4 @@ const SortType = {
   PRICE: `price`
 };
 
-export {EVENTS_COUNT, eventType, optionsArray, cities, SortType};
+export {EVENTS_COUNT, eventTypes, optionsArray, cities, SortType};

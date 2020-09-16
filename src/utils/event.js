@@ -1,3 +1,5 @@
+import {eventTypes} from '../const';
+
 const humanizeDate = (date) => {
   const month = date.toLocaleString(`en-US`, {month: `short`});
   const day = date.getDate();
@@ -58,4 +60,6 @@ const sortPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export {humanizeDate, getWeightForNullTime, sortTime, sortPrice, getFormatedHours, getFormatedDate};
+const getPlaceholder = (type) => eventTypes.drive.includes(type) ? `to` : `in`;
+
+export {humanizeDate, getWeightForNullTime, sortTime, sortPrice, getFormatedHours, getFormatedDate, getPlaceholder};

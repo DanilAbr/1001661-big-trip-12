@@ -1,6 +1,6 @@
 import AbstractView from './abstract';
-import {getFormatedHours, getFormatedDate} from '../utils/event';
-import {eventType} from '../const';
+import {getFormatedHours, getFormatedDate, getPlaceholder} from '../utils/event';
+import {capitalizeFirstLetter} from '../utils/common';
 
 const getFormatedDatetime = (date) => {
   const formatedDate = getFormatedDate(date, `-`);
@@ -9,17 +9,14 @@ const getFormatedDatetime = (date) => {
   return `${formatedDate}T${formatedTime}`;
 };
 
-const getOptionsTemplate = (options) => {
-  return options.length > 0
-    ? options.map(({name, price}) => (
-      `<li class="event__offer">
-        <span class="event__offer-title">${name}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${price}</span>
-      </li>`
-    )).join(`\n`)
-    : ``;
-};
+const getOptionsTemplate = (options) =>
+  options.length < 0 ? `` : options.map(({name, price}) => (
+    `<li class="event__offer">
+      <span class="event__offer-title">${name}</span>
+      &plus;
+      &euro;&nbsp;<span class="event__offer-price">${price}</span>
+    </li>`
+  )).join(`\n`);
 
 const getDuration = (start, end) => {
   const duration = ((end.getTime() - start.getTime()) / (1000 * 60));
@@ -36,29 +33,11 @@ const getDuration = (start, end) => {
   return `${minutes}M`;
 };
 
-
-const getPlaceholder = (type) => { // Ask Не слишком замудрённо?
-  const typeValues = Object.values(eventType);
-  const typeKeys = Object.keys(eventType);
-  let placeholder;
-
-  typeValues.forEach((typeValue, index) => {
-    const arrayValues = Object.values(typeValue);
-
-    arrayValues.forEach((value) => {
-      if (value === type) {
-        placeholder = typeKeys[index] === `stopping` ? `in` : `to`;
-      }
-    });
-  });
-
-  return placeholder;
-};
-
 const createEventTemplate = (event) => {
   const {city, type, price, startDate, endDate, options} = event;
 
-  const placeholder = getPlaceholder(type);
+  const upperType = capitalizeFirstLetter(type);
+  const eventTitle = `${upperType} ${getPlaceholder(type)} ${city}`;
   const startHours = getFormatedHours(startDate);
   const endHours = getFormatedHours(endDate);
   const startDatetime = getFormatedDatetime(startDate);
@@ -72,7 +51,7 @@ const createEventTemplate = (event) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>
-        <h3 class="event__title">${type} ${placeholder} ${city}</h3>
+        <h3 class="event__title">${eventTitle}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

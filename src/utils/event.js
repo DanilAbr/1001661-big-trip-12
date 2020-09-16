@@ -1,24 +1,28 @@
+import moment from 'moment';
 import {eventTypes} from '../const';
 
-const humanizeDate = (date) => {
-  const month = date.toLocaleString(`en-US`, {month: `short`});
-  const day = date.getDate();
+const formatEventDate = (date) => {
+  if (!(date instanceof Date)) {
+    return ``;
+  }
 
-  return `${month} ${day}`;
+  return moment(date).format(`MMM D`);
 };
 
 const getFormatedHours = (date) => {
-  const hours = (`0` + date.getHours()).slice(-2);
-  const minutes = (`0` + date.getMinutes()).slice(-2);
+  if (!(date instanceof Date)) {
+    return ``;
+  }
 
-  return `${hours}:${minutes}`;
+  return moment(date).format(`HH:mm`);
 };
 
 const getFormatedDate = (date, separator) => {
-  const currentDate = new Date(date);
-  const formatedDate = currentDate.toLocaleDateString().split(`.`).join(separator);
+  if (!(date instanceof Date)) {
+    return ``;
+  }
 
-  return formatedDate;
+  return moment(date).format(`Y${separator}MM${separator}DD`);
 };
 
 const getWeightForNullTime = (dateA, dateB) => {
@@ -60,6 +64,33 @@ const sortPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
+const getDuration = (start, end) => {
+  if (!(start instanceof Date) || !(start instanceof Date)) {
+    return ``;
+  }
+
+  start = moment(start);
+  end = moment(end);
+
+  const duration = end.diff(start, `minutes`);
+  const days = end.diff(start, `days`);
+  const hours = Math.floor((duration % 24 % 60));
+  const minutes = Math.floor((duration % (60 * 24)) % 60);
+
+  return `${days ? `${days}D` : ``}
+          ${hours ? `${hours}H` : ``}
+          ${minutes ? `${minutes}M` : ``}`;
+};
+
 const getPlaceholder = (type) => eventTypes.drive.includes(type) ? `to` : `in`;
 
-export {humanizeDate, getWeightForNullTime, sortTime, sortPrice, getFormatedHours, getFormatedDate, getPlaceholder};
+export {
+  formatEventDate,
+  getWeightForNullTime,
+  sortTime,
+  sortPrice,
+  getFormatedHours,
+  getFormatedDate,
+  getPlaceholder,
+  getDuration
+};

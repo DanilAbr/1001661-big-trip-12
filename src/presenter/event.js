@@ -1,4 +1,4 @@
-﻿import EventView from '../view/event';
+import EventView from '../view/event';
 import EventEditView from '../view/event-edit';
 import {cities} from '../const';
 import {render, RenderPosition, replace, remove} from '../utils/render';

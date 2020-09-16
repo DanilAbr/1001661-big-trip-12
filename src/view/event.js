@@ -1,5 +1,5 @@
 import AbstractView from './abstract';
-import {getFormatedHours, getFormatedDate, getPlaceholder} from '../utils/event';
+import {getFormatedHours, getFormatedDate, getPlaceholder, getDuration} from '../utils/event';
 import {capitalizeFirstLetter} from '../utils/common';
 
 const getFormatedDatetime = (date) => {
@@ -17,21 +17,6 @@ const getOptionsTemplate = (options) =>
       &euro;&nbsp;<span class="event__offer-price">${price}</span>
     </li>`
   )).join(`\n`);
-
-const getDuration = (start, end) => {
-  const duration = ((end.getTime() - start.getTime()) / (1000 * 60));
-  const days = Math.floor(duration / (60 * 24));
-  const hours = Math.floor((duration % (60 * 24)) / 60);
-  const minutes = Math.floor(((duration % (60 * 24)) % 60));
-
-  if (days > 0) {
-    return `${days}D ${hours}H ${minutes}M`;
-  } else if (hours >= 1) {
-    return ` ${hours}H ${minutes}M`;
-  }
-
-  return `${minutes}M`;
-};
 
 const createEventTemplate = (event) => {
   const {city, type, price, startDate, endDate, options} = event;

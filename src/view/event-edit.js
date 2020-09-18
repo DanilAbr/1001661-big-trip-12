@@ -208,6 +208,7 @@ export default class EventEdit extends SmartView {
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.startDate,
           onChange: this._startDateInputChangeHandler,
+          maxDate: this._data.endDate,
           enableTime: true
         }
     );

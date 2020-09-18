@@ -1,5 +1,3 @@
-const EVENTS_COUNT = 10;
-
 const cities = [`Moscow`, `Barcelona`, `Buenos Aires`, `Los Angeles`];
 const eventTypes = {
   stopping: [`check-in`, `sightseeing`, `restaurant`],
@@ -45,4 +43,18 @@ const UpdateType = {
   MAJOR: `MAJOR`
 };
 
-export {EVENTS_COUNT, eventTypes, optionsArray, cities, SortType, UpdateType, UserAction};
+const FilterType = {
+  EVERYTHING: `EVERYTHING`,
+  FUTURE: `FUTURE`,
+  PAST: `PAST`
+};
+
+export {
+  eventTypes,
+  optionsArray,
+  cities,
+  SortType,
+  UpdateType,
+  UserAction,
+  FilterType
+};

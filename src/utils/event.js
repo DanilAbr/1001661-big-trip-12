@@ -1,26 +1,27 @@
 import moment from 'moment';
 import {eventTypes} from '../const';
 
-// Ask ???
-const checkInstanceofDate = (date) => {
-  if (!(date instanceof Date)) {
-    return ``;
-  }
-  return null;
-};
-
 const formatEventDate = (date) => {
-  checkInstanceofDate(date);
+  if (!(date instanceof Date)) {
+    return true;
+  }
+
   return moment(date).format(`MMM D`);
 };
 
 const getFormatedHours = (date) => {
-  checkInstanceofDate();
+  if (!(date instanceof Date)) {
+    return true;
+  }
+
   return moment(date).format(`HH:mm`);
 };
 
 const getFormatedDate = (date, separator) => {
-  checkInstanceofDate();
+  if (!(date instanceof Date)) {
+    return true;
+  }
+
   return moment(date).format(`Y${separator}MM${separator}DD`);
 };
 

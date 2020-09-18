@@ -158,10 +158,25 @@ export default class EventEdit extends SmartView {
     this._cityInputHandler = this._cityInputHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setStartDatepicker();
     this._setEndDatepicker();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
   }
 
   reset(event) {
@@ -178,6 +193,7 @@ export default class EventEdit extends SmartView {
     this._setEndDatepicker();
     this.setFormRollupClickHandler(this._callback.formRollupClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setStartDatepicker() {
@@ -238,7 +254,7 @@ export default class EventEdit extends SmartView {
 
   _typeInputHandler(evt) {
     evt.preventDefault();
-    this.updateData({type: evt.target.value}, false);
+    this.updateData({type: evt.target.value});
   }
 
   _cityInputHandler(evt) {
@@ -259,6 +275,11 @@ export default class EventEdit extends SmartView {
     this._callback.favoriteClick();
   }
 
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEdit.parseEventToData(this._data));
+  }
+
   setRollupClickHandler(callback) {
     this._callback.rollupClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupClickHandler);
@@ -277,6 +298,11 @@ export default class EventEdit extends SmartView {
   setFormRollupClickHandler(callback) {
     this._callback.formRollupClick = callback;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._formRollupClickHandler);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
   }
 
   static parseEventToData(event) {

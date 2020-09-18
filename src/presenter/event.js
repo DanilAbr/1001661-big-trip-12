@@ -3,6 +3,7 @@ import EventEditView from '../view/event-edit';
 import {cities} from '../const';
 import {render, RenderPosition, replace, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../const';
+import {isDatesEqual} from '../utils/event';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -25,6 +26,7 @@ export default class Event {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFormRollupClick = this._handleFormRollupClick.bind(this);
     this._onEscKeyDown = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(event) {
@@ -38,6 +40,7 @@ export default class Event {
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setFormRollupClickHandler(this._handleFormRollupClick);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventsContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -92,15 +95,6 @@ export default class Event {
     this._replaceEventToForm();
   }
 
-  _handleFormSubmit(event) {
-    this._changeData(
-        UserAction.UPDATE_TASK,
-        UpdateType.MINOR,
-        event
-    );
-    this._replaceFormToEvent();
-  }
-
   _handleFormRollupClick() {
     this._eventEditComponent.reset(this._event);
     this._replaceFormToEvent();
@@ -116,6 +110,27 @@ export default class Event {
               isFavorite: !this._event.isFavorite
             }
         )
+    );
+  }
+
+  _handleFormSubmit(update) {
+    const isMinorUpdate =
+      !isDatesEqual(this._event.startDate, update.StartDate) ||
+      !isDatesEqual(this._event.endDate, update.endDate);
+
+    this._changeData(
+        UserAction.UPDATE_TASK,
+        isMinorUpdate ? UpdateType.MAJOR : UpdateType.PATCH,
+        update
+    );
+    this._replaceFormToEvent();
+  }
+
+  _handleDeleteClick(event) {
+    this._changeData(
+        UserAction.DELETE_TASK,
+        UpdateType.MINOR,
+        event
     );
   }
 }

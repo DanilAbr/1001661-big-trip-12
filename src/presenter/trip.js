@@ -42,9 +42,7 @@ export default class Trip {
   }
 
   _handleModeChange() {
-    Object
-      .values(this._eventPresenter)
-      .forEach((presenter) => presenter.resetView());
+    Object.values(this._eventPresenter).forEach((presenter) => presenter.resetView());
   }
 
   _handleSortTypeChange(sortType) {
@@ -53,9 +51,7 @@ export default class Trip {
     }
 
     this._currentSortType = sortType;
-    remove(this._sortComponent);
-    remove(this._daysContainerComponent);
-    this._clearEventList();
+    this._clearTrip();
     this._renderTrip();
   }
 
@@ -144,27 +140,16 @@ export default class Trip {
   _renderEvents(days) {
     const eventsContainers = this._daysContainerComponent.getElement().querySelectorAll(`.trip-events__list`);
 
-    eventsContainers.forEach((eventsContainer, index) => {
-      days[index].map((event) => this._renderEvent(eventsContainer, event));
-    });
+    eventsContainers.forEach((eventsContainer, index) =>
+      days[index].map((event) => this._renderEvent(eventsContainer, event)));
   }
 
   _renderNoEvents() {
     render(this._tripContainer, new NoEventsView(), RenderPosition.BEFOREEND);
   }
 
-  _clearEventList() {
-    Object
-      .values(this._eventPresenter)
-      .forEach((presenter) => presenter.destroy());
-
-    this._eventPresenter = {};
-  }
-
   _clearTrip({resetSortType = false} = {}) {
-    Object
-      .values(this._eventPresenter)
-      .forEach((presenter) => presenter.destroy());
+    Object.values(this._eventPresenter).forEach((presenter) => presenter.destroy());
     this._eventPresenter = {};
 
     remove(this._sortComponent);

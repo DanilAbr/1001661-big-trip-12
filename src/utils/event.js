@@ -1,27 +1,26 @@
 import moment from 'moment';
 import {eventTypes} from '../const';
 
-const formatEventDate = (date) => {
+// Ask ???
+const checkInstanceofDate = (date) => {
   if (!(date instanceof Date)) {
     return ``;
   }
+  return null;
+};
 
+const formatEventDate = (date) => {
+  checkInstanceofDate(date);
   return moment(date).format(`MMM D`);
 };
 
 const getFormatedHours = (date) => {
-  if (!(date instanceof Date)) {
-    return ``;
-  }
-
+  checkInstanceofDate();
   return moment(date).format(`HH:mm`);
 };
 
 const getFormatedDate = (date, separator) => {
-  if (!(date instanceof Date)) {
-    return ``;
-  }
-
+  checkInstanceofDate();
   return moment(date).format(`Y${separator}MM${separator}DD`);
 };
 
@@ -83,6 +82,7 @@ const getDuration = (start, end) => {
 };
 
 const getPlaceholder = (type) => eventTypes.drive.includes(type) ? `to` : `in`;
+const isDatesEqual = (dateA, dateB) => moment(dateA).isSame(dateB);
 
 export {
   formatEventDate,
@@ -92,5 +92,6 @@ export {
   getFormatedHours,
   getFormatedDate,
   getPlaceholder,
-  getDuration
+  getDuration,
+  isDatesEqual
 };

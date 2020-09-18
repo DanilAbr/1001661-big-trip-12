@@ -10,7 +10,8 @@ import {SortType} from '../const';
 import {updateItem} from '../utils/common';
 
 export default class Trip {
-  constructor(TripContainer) {
+  constructor(TripContainer, eventsModel) {
+    this._eventsModel = eventsModel;
     this._tripContainer = TripContainer;
     this._currentSortType = SortType.DEFAULT;
     this._days = [];
@@ -28,6 +29,10 @@ export default class Trip {
     this._sourcedEvents = events.slice();
 
     this._renderBoard();
+  }
+
+  _getEventns() {
+    return this._eventsModel.getEvents();
   }
 
   _handleModeChange() {
@@ -77,7 +82,11 @@ export default class Trip {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _getDays(events) {
+  _getDays(events, sortType) {
+    if (sortType === `default`) {
+      events.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+    }
+
     return events
       .slice(1)
       .reduce((summ, currentEvent) => {
@@ -99,7 +108,7 @@ export default class Trip {
   _renderDays(events) {
     render(this._tripContainer, this._daysContainerComponent, RenderPosition.BEFOREEND);
 
-    this._days = this._getDays(events);
+    this._days = this._getDays(events, this._currentSortType);
 
     this._days.forEach((day, index) => {
       this._dayComponent = new DayView();

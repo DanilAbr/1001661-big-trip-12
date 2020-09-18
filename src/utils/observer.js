@@ -1,6 +1,6 @@
 ﻿export default class Observer {
   constructor() {
-    this._observer = [];
+    this._observers = [];
   }
 
   addObserver(observer) {

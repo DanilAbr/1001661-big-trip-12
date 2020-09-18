@@ -2,6 +2,7 @@ import EventView from '../view/event';
 import EventEditView from '../view/event-edit';
 import {cities} from '../const';
 import {render, RenderPosition, replace, remove} from '../utils/render';
+import {UserAction, UpdateType} from '../const';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -19,6 +20,7 @@ export default class Event {
     this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
 
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleRollupClick = this._handleRollupClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFormRollupClick = this._handleFormRollupClick.bind(this);
@@ -33,6 +35,7 @@ export default class Event {
     this._eventEditComponent = new EventEditView(event, cities);
 
     this._eventComponent.setRollupClickHandler(this._handleRollupClick);
+    this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setFormRollupClickHandler(this._handleFormRollupClick);
 
@@ -90,12 +93,29 @@ export default class Event {
   }
 
   _handleFormSubmit(event) {
-    this._changeData(event);
+    this._changeData(
+        UserAction.UPDATE_TASK,
+        UpdateType.MINOR,
+        event
+    );
     this._replaceFormToEvent();
   }
 
   _handleFormRollupClick() {
     this._eventEditComponent.reset(this._event);
     this._replaceFormToEvent();
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+        UserAction.UPDATE_TASK,
+        UpdateType.PATCH,
+        Object.assign(
+            this._event,
+            {
+              isFavorite: !this._event.isFavorite
+            }
+        )
+    );
   }
 }

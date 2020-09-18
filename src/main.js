@@ -12,8 +12,6 @@ const events = new Array(EVENTS_COUNT).fill().map(generateEvent);
 const eventsModel = new EventsModel();
 eventsModel.setEvents(events);
 
-console.log(eventsModel)
-
 const headerElement = document.querySelector(`.trip-main`);
 const controlsElement = headerElement.querySelector(`.trip-main__trip-controls`);
 const mainContainerElement = document.querySelector(`.trip-events`);
@@ -23,4 +21,4 @@ render(headerElement, new InfoView(events), RenderPosition.AFTERBEGIN);
 render(controlsElement, new PageMenuView(), RenderPosition.AFTERBEGIN);
 render(controlsElement, new FiltersView(), RenderPosition.BEFOREEND);
 
-tripPresenter.init(events);
+tripPresenter.init();

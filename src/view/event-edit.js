@@ -216,7 +216,6 @@ export default class EventEdit extends SmartView {
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
     this.getElement().querySelector(`.event__input--price`).addEventListener(`input`, this._priceInputHandler);
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeInputHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityInputHandler);
@@ -230,11 +229,6 @@ export default class EventEdit extends SmartView {
   _formRollupClickHandler(evt) {
     evt.preventDefault();
     this._callback.formRollupClick();
-  }
-
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this.updateData({isFavorite: !this._data.isFavorite}, false);
   }
 
   _priceInputHandler(evt) {
@@ -258,6 +252,21 @@ export default class EventEdit extends SmartView {
 
   _endDateInputChangeHalder(selectedDates) {
     this.updateData({endDate: selectedDates[0]});
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
+  setRollupClickHandler(callback) {
+    this._callback.rollupClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
   setFormSubmitHandler(callback) {

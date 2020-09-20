@@ -1,5 +1,3 @@
-const EVENTS_COUNT = 10;
-
 const cities = [`Moscow`, `Barcelona`, `Buenos Aires`, `Los Angeles`];
 const eventTypes = {
   stopping: [`check-in`, `sightseeing`, `restaurant`],
@@ -33,4 +31,30 @@ const SortType = {
   PRICE: `price`
 };
 
-export {EVENTS_COUNT, eventTypes, optionsArray, cities, SortType};
+const UserAction = {
+  UPDATE_TASK: `UPDATE_TASK`,
+  ADD_TASK: `ADD_TASK`,
+  DELETE_TASK: `DELETE_TASK`
+};
+
+const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+const FilterType = {
+  EVERYTHING: `EVERYTHING`,
+  FUTURE: `FUTURE`,
+  PAST: `PAST`
+};
+
+export {
+  eventTypes,
+  optionsArray,
+  cities,
+  SortType,
+  UpdateType,
+  UserAction,
+  FilterType
+};

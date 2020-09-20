@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomInteger, getRandomBoolean, getRandomObjectItem} from '../utils/common';
+import {getRandomItemOfArray, getRandomInteger, getRandomBoolean, getRandomObjectItem, getRandomArray} from '../utils/common';
 import {cities, eventTypes, optionsArray} from './../const';
 
 const getStartDate = () => {
@@ -23,7 +23,6 @@ const getEndDate = (date) => {
 };
 
 const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
-const getOptions = (options) => options.filter(() => getRandomBoolean());
 
 const getRandomInfo = () =>
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`
@@ -37,9 +36,9 @@ const generateEvent = () => {
   return {
     id: generateId(),
     isFavorite: getRandomBoolean(),
-    type: getRandomArrayItem(getRandomObjectItem(eventTypes)),
-    city: getRandomArrayItem(cities),
-    options: getOptions(optionsArray),
+    type: getRandomItemOfArray(getRandomObjectItem(eventTypes)),
+    city: getRandomItemOfArray(cities),
+    options: getRandomArray(optionsArray),
     price: getRandomInteger(10, 1000),
     startDate,
     endDate: getEndDate(startDate),
@@ -48,4 +47,4 @@ const generateEvent = () => {
   };
 };
 
-export {generateEvent};
+export {generateEvent, generateId};

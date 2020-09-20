@@ -1,15 +1,9 @@
 import AbstractView from './abstract';
-import {getFormatedHours, getFormatedDate, getPlaceholder, getDuration} from '../utils/event';
+import {getFormatedTime, getFormatedInfoDatetime, getDuration} from '../utils/datetime';
+import {getPlaceholder} from '../utils/event';
 import {capitalizeFirstLetter} from '../utils/common';
 
-const getFormatedDatetime = (date) => {
-  const formatedDate = getFormatedDate(date, `-`);
-  const formatedTime = getFormatedHours(date);
-
-  return `${formatedDate}T${formatedTime}`;
-};
-
-const getOptionsTemplate = (options) =>
+const getRandomArrayTemplate = (options) =>
   options.length < 0 ? `` : options.map(({name, price}) => (
     `<li class="event__offer">
       <span class="event__offer-title">${name}</span>
@@ -23,12 +17,12 @@ const createEventTemplate = (event) => {
 
   const upperType = capitalizeFirstLetter(type);
   const eventTitle = `${upperType} ${getPlaceholder(type)} ${city}`;
-  const startHours = getFormatedHours(startDate);
-  const endHours = getFormatedHours(endDate);
-  const startDatetime = getFormatedDatetime(startDate);
-  const endDatetime = getFormatedDatetime(endDate);
+  const startHours = getFormatedTime(startDate);
+  const endHours = getFormatedTime(endDate);
+  const startDatetime = getFormatedInfoDatetime(startDate);
+  const endDatetime = getFormatedInfoDatetime(endDate);
   const duration = getDuration(startDate, endDate);
-  const optionsMarkup = getOptionsTemplate(options.slice(0, 3));
+  const optionsMarkup = getRandomArrayTemplate(options.slice(0, 3));
 
   return (
     `<li class="trip-events__item">

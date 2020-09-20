@@ -1,15 +1,26 @@
 import SmartView from './smart';
-import {getFormatedHours, getFormatedDate, getPlaceholder} from '../utils/event';
-import {eventTypes} from '../const';
-import {capitalizeFirstLetter} from '../utils/common';
+import {getPlaceholder} from '../utils/event';
+import {getFormatedInputDatetime} from '../utils/datetime';
+import {eventTypes, optionsArray, cities} from '../const';
+import {capitalizeFirstLetter, getRandomArray} from '../utils/common';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const getFormatedDatetime = (date) =>
-  `${getFormatedDate(date, `/`).slice(0, -2)} ${ getFormatedHours(date)}`;
+const BLANK_EVENT = {
+  id: 0,
+  isFavorite: false,
+  type: `taxi`,
+  city: `Moskow`,
+  options: getRandomArray(optionsArray),
+  price: 0,
+  startDate: new Date(),
+  endDate: new Date(),
+  info: null,
+  photos: `http://picsum.photos/248/152?r=${Math.random()}`,
+};
 
-const getOptionsTemplate = (options) =>
+const getRandomArrayTemplate = (options) =>
   options.length < 0 ? `` : options.map(({name, price}, index) => (
     `<div class="event__offer-selector">
       <input
@@ -42,16 +53,16 @@ const createActivityListTemplate = () =>
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
     </div>`)).join(`\n`);
 
-const createCitiesDatalist = (cities) =>
+const createCitiesDatalist = () =>
   cities.length < 0 ? `` : cities.map((city) =>
     `<option value="${city}"></option>`).join(`\n`);
 
-const createEventEditTemplate = (event, cities) => {
+const createEventEditTemplate = (event) => {
   const {city, type, price, startDate, endDate, options, isFavorite} = event;
 
-  const startDateTime = getFormatedDatetime(startDate);
-  const endDatetime = getFormatedDatetime(endDate);
-  const optionsMarkup = getOptionsTemplate(options);
+  const startDateTime = getFormatedInputDatetime(startDate);
+  const endDatetime = getFormatedInputDatetime(endDate);
+  const optionsMarkup = getRandomArrayTemplate(options);
   const transferTypesList = createTransferListTemplate();
   const activityTypesList = createActivityListTemplate();
   const citiesDatalist = createCitiesDatalist(cities);
@@ -142,12 +153,12 @@ const createEventEditTemplate = (event, cities) => {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(event, cities) {
+  constructor(isEventNew, event = BLANK_EVENT) {
     super();
 
-    this._cities = cities;
+    this._isEventNew = isEventNew;
     this._data = EventEdit.parseEventToData(event);
-    this._startDatepicker = null;
+    this._flatpicker = null;
     this._endDatepicker = null;
 
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -161,22 +172,12 @@ export default class EventEdit extends SmartView {
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
-    this._setStartDatepicker();
-    this._setEndDatepicker();
+    this._setFlatpicker();
   }
 
   removeElement() {
     super.removeElement();
-
-    if (this._startDatepicker) {
-      this._startDatepicker.destroy();
-      this._startDatepicker = null;
-    }
-
-    if (this._endDatepicker) {
-      this._endDatepicker.destroy();
-      this._endDatepicker = null;
-    }
+    this._removeFlatpicker();
   }
 
   reset(event) {
@@ -184,25 +185,28 @@ export default class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._data, this._cities);
+    return createEventEditTemplate(this._data, this._isEventNew);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this._setStartDatepicker();
-    this._setEndDatepicker();
+    this._setFlatpicker();
     this.setFormRollupClickHandler(this._callback.formRollupClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
-  _setStartDatepicker() {
-    if (this._startDatepicker) {
-      this._startDatepicker.destroy();
-      this._startDatepicker = null;
+  _removeFlatpicker() {
+    if (this._flatpicker) {
+      this._flatpicker.destroy();
+      this._flatpicker = null;
     }
+  }
 
-    this._startDatepicker = flatpickr(
+  _setFlatpicker() {
+    this._removeFlatpicker();
+
+    this._flatpicker = flatpickr(
         this.getElement().querySelector(`#event-start-time-1`),
         {
           dateFormat: `d/m/y H:i`,
@@ -212,15 +216,8 @@ export default class EventEdit extends SmartView {
           enableTime: true
         }
     );
-  }
 
-  _setEndDatepicker() {
-    if (this._endDatepicker) {
-      this._endDatepicker.destroy();
-      this._endDatepicker = null;
-    }
-
-    this._endDatepicker = flatpickr(
+    this._flatpicker = flatpickr(
         this.getElement().querySelector(`#event-end-time-1`),
         {
           dateFormat: `d/m/y H:i`,
@@ -233,7 +230,7 @@ export default class EventEdit extends SmartView {
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelector(`.event__input--price`).addEventListener(`input`, this._priceInputHandler);
+    this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._priceInputHandler);
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeInputHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityInputHandler);
   }
@@ -250,7 +247,13 @@ export default class EventEdit extends SmartView {
 
   _priceInputHandler(evt) {
     evt.preventDefault();
+    const prevPrice = this._data.price;
+
     this.updateData({price: evt.target.value}, true);
+
+    if (!(Number.isInteger(+this._data.price)) || (+this._data.price < 0)) {
+      this.updateData({price: prevPrice});
+    }
   }
 
   _typeInputHandler(evt) {
@@ -260,7 +263,13 @@ export default class EventEdit extends SmartView {
 
   _cityInputHandler(evt) {
     evt.preventDefault();
+    const prevCity = this._data.city;
+
     this.updateData({city: evt.target.value}, true);
+
+    if (cities.includes(this._data.city) === false) {
+      this.updateData({city: prevCity});
+    }
   }
 
   _startDateInputChangeHandler(selectedDates) {

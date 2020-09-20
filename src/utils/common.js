@@ -7,14 +7,16 @@ const getRandomInteger = (a = 0, b = 1) => {
 
 const getRandomBoolean = () => Math.random() > 0.5;
 const capitalizeFirstLetter = (text) => `${text[0].toUpperCase()}${text.slice(1)}`;
-const getRandomArrayItem = (array) => array[Math.floor(Math.random() * array.length)];
+const getRandomArray = (items) => items.filter(() => getRandomBoolean());
+const getRandomItemOfArray = (array) => array[Math.floor(Math.random() * array.length)];
 const getRandomObjectItem = (obj) =>
   obj[Object.keys(obj)[Math.floor(Math.random() * Object.keys(obj).length)]];
 
 export {
   getRandomInteger,
-  getRandomArrayItem,
+  getRandomItemOfArray,
   getRandomBoolean,
   getRandomObjectItem,
-  capitalizeFirstLetter
+  capitalizeFirstLetter,
+  getRandomArray
 };

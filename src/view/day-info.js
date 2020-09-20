@@ -1,10 +1,10 @@
 import AbstractView from './abstract';
-import {formatEventDate, getFormatedDate} from '../utils/event';
+import {getFormatedInfoDatetime, getFormatedDate} from '../utils/datetime';
 
 const createDayTemplate = (day, index, sortType) => {
   const dayNumber = index + 1;
-  const date = formatEventDate(day[0].startDate);
-  const datetime = getFormatedDate(day[0].startDate, `-`);
+  const date = getFormatedDate(day[0].startDate);
+  const datetime = getFormatedInfoDatetime(day[0].startDate, `-`);
 
   return (
     `<div class="day__info">

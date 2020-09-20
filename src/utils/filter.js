@@ -1,4 +1,4 @@
-﻿import {FilterType} from '../const';
+import {FilterType} from '../const';
 
 export const filter = {
   [FilterType.EVERYTHING]: (events) => events,

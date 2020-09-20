@@ -1,9 +1,8 @@
 import EventView from '../view/event';
 import EventEditView from '../view/event-edit';
-import {cities} from '../const';
 import {render, RenderPosition, replace, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../const';
-import {isDatesEqual} from '../utils/event';
+import {isDatesEqual} from '../utils/datetime';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -34,7 +33,7 @@ export default class Event {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event, cities);
+    this._eventEditComponent = new EventEditView(false, event);
 
     this._eventComponent.setRollupClickHandler(this._handleRollupClick);
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);

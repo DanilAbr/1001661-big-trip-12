@@ -39,11 +39,14 @@ const sortPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
+const sortDefault = (a, b) => a.startDate.getTime() - b.startDate.getTime();
+
 const getPlaceholder = (type) => eventTypes.drive.includes(type) ? `to` : `in`;
 
 export {
   getWeightForNullTime,
   sortTime,
   sortPrice,
+  sortDefault,
   getPlaceholder,
 };

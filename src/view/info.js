@@ -4,16 +4,13 @@ import {getFormatedDate} from '../utils/datetime';
 const getFormatedTotalPeriod = (firstDate, lastDate) => {
   const formatedFirstDate = getFormatedDate(firstDate);
   let formatedLastDate = getFormatedDate(lastDate);
-  const firstEventMonth = firstDate.getMonth();
-  const lastEventMonth = lastDate.getMonth();
 
-  formatedLastDate = firstEventMonth === lastEventMonth
-    ? formatedLastDate.slice(-2)
-    : formatedLastDate;
+  if (firstDate.getMonth() === lastDate.getMonth()) {
+    formatedLastDate = formatedLastDate.slice(-2);
+  }
 
   return `${formatedFirstDate}&nbsp;&mdash;&nbsp;${formatedLastDate}`;
 };
-
 
 const getMainWay = (events) =>
   `${events[0].city}
@@ -40,7 +37,7 @@ const createTripInfoTemplate = (events) => {
   let totalPeriod;
   let mainWay;
 
-  if (events.length !== 0) {
+  if (events.length !== 0) { // Ask Как убрать эту проверку?
     const firstEventDate = events[0].startDate;
     const lastEventDate = events[events.length - 1].startDate;
 

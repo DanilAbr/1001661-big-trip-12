@@ -1,27 +1,15 @@
 import SmartView from './smart';
 import {getPlaceholder} from '../utils/event';
 import {getFormatedInputDatetime} from '../utils/datetime';
-import {eventTypes, optionsArray, cities} from '../const';
-import {capitalizeFirstLetter, getRandomArray} from '../utils/common';
+import {eventTypes, cities} from '../const';
+import {capitalizeFirstLetter} from '../utils/common';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import {BLANK_EVENT} from '../mock/event';
 
-const BLANK_EVENT = {
-  id: 0,
-  isFavorite: false,
-  type: `taxi`,
-  city: `Moskow`,
-  options: getRandomArray(optionsArray),
-  price: 0,
-  startDate: new Date(),
-  endDate: new Date(),
-  info: null,
-  photos: `http://picsum.photos/248/152?r=${Math.random()}`,
-};
-
-const getRandomArrayTemplate = (options) =>
-  options.length < 0 ? `` : options.map(({name, price}, index) => (
+const getOptionsMarkup = (options) =>
+  options.length < 0 ? `` : options.map(({name, price}, index) =>
     `<div class="event__offer-selector">
       <input
         class="event__offer-checkbox  visually-hidden"
@@ -35,132 +23,145 @@ const getRandomArrayTemplate = (options) =>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${price}</span>
       </label>
-    </div>`
-  )).join(`\n`);
+    </div>`).join(`\n`);
 
 const createTransferListTemplate = () =>
-  eventTypes.drive.length < 0 ? `` : eventTypes.drive.map((type) => (
+  eventTypes.drive.length < 0 ? `` : eventTypes.drive.map((type) =>
     `<div class="event__type-item">
       <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
-    </div>`
-  )).join(`\n`);
+    </div>`).join(`\n`);
 
 const createActivityListTemplate = () =>
-  eventTypes.stopping.length < 0 ? `` : eventTypes.stopping.map((type) => (
+  eventTypes.stopping.length < 0 ? `` : eventTypes.stopping.map((type) =>
     `<div class="event__type-item">
       <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
-    </div>`)).join(`\n`);
+    </div>`).join(`\n`);
 
 const createCitiesDatalist = () =>
   cities.length < 0 ? `` : cities.map((city) =>
     `<option value="${city}"></option>`).join(`\n`);
 
-const createEventEditTemplate = (event) => {
+const createFavoriteMarkup = (isFavorite) =>
+  `<input
+      id="event-favorite-1"
+      class="event__favorite-checkbox  visually-hidden"
+      type="checkbox"
+      name="event-favorite"
+      ${isFavorite ? `checked` : ``}
+    />
+    <label class="event__favorite-btn" for="event-favorite-1">
+      <span class="visually-hidden">Add to favorite</span>
+      <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+        <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+      </svg>
+    </label>`;
+
+const createFormRollupButton = () =>
+  `<button class="event__rollup-btn" type="button">
+    <span class="visually-hidden">Open event</span>
+  </button>`;
+
+const createContainer = (isEventNew) =>
+  `${isEventNew ? `` : `<li class="trip-events__item">`}<form class="${isEventNew ? `trip-events__item` : ``} event event--edit" action="#" method="post">`;
+
+const createEventEditTemplate = (event, isEventNew) => {
   const {city, type, price, startDate, endDate, options, isFavorite} = event;
 
   const startDateTime = getFormatedInputDatetime(startDate);
   const endDatetime = getFormatedInputDatetime(endDate);
-  const optionsMarkup = getRandomArrayTemplate(options);
+  const optionsMarkup = getOptionsMarkup(options);
   const transferTypesList = createTransferListTemplate();
   const activityTypesList = createActivityListTemplate();
   const citiesDatalist = createCitiesDatalist(cities);
   const eventLabel = `${capitalizeFirstLetter(type)} ${getPlaceholder(type)}`;
+  const favoriteMarkup = createFavoriteMarkup(isFavorite);
+  const formRollupButton = createFormRollupButton();
+  const container = createContainer(isEventNew);
 
   return (
-    `<li class="trip-events__item">
-      <form class="event  event--edit" action="#" method="post">
-        <header class="event__header">
-          <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
-              <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt=${type}>
-            </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
-            <div class="event__type-list">
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Transfer</legend>
-                ${transferTypesList}
-              </fieldset>
-
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Activity</legend>
-                ${activityTypesList}
-              </fieldset>
-            </div>
-          </div>
-
-          <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-1">
-              ${eventLabel}
-            </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
-            <datalist id="destination-list-1">
-              ${citiesDatalist}
-            </datalist>
-          </div>
-
-          <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-1">
-              From
-            </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateTime}">
-            &mdash;
-            <label class="visually-hidden" for="event-end-time-1">
-              To
-            </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDatetime}">
-          </div>
-
-          <div class="event__field-group  event__field-group--price">
-            <label class="event__label" for="event-price-1">
-              <span class="visually-hidden">Price</span>
-              &euro;
-            </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
-          </div>
-
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
-
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
-          <label class="event__favorite-btn" for="event-favorite-1">
-            <span class="visually-hidden">Add to favorite</span>
-            <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-              <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-            </svg>
+    `${container}
+      <header class="event__header">
+        <div class="event__type-wrapper">
+          <label class="event__type  event__type-btn" for="event-type-toggle-1">
+            <span class="visually-hidden">Choose event type</span>
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt=${type}>
           </label>
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
-        </header>
+          <div class="event__type-list">
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Transfer</legend>
+              ${transferTypesList}
+            </fieldset>
 
-        <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Activity</legend>
+              ${activityTypesList}
+            </fieldset>
+          </div>
+        </div>
 
-            <div class="event__available-offers">
-              ${optionsMarkup}
-            </div>
-          </section>
+        <div class="event__field-group  event__field-group--destination">
+          <label class="event__label  event__type-output" for="event-destination-1">
+            ${eventLabel}
+          </label>
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <datalist id="destination-list-1">
+            ${citiesDatalist}
+          </datalist>
+        </div>
+
+        <div class="event__field-group  event__field-group--time">
+          <label class="visually-hidden" for="event-start-time-1">
+            From
+          </label>
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateTime}">
+          &mdash;
+          <label class="visually-hidden" for="event-end-time-1">
+            To
+          </label>
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDatetime}">
+        </div>
+
+        <div class="event__field-group  event__field-group--price">
+          <label class="event__label" for="event-price-1">
+            <span class="visually-hidden">Price</span>
+            &euro;
+          </label>
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+        </div>
+
+        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__reset-btn" type="reset">Delete</button>
+
+        ${isEventNew ? `` : favoriteMarkup + formRollupButton}
+      </header>
+
+      <section class="event__details">
+        <section class="event__section  event__section--offers">
+          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+          <div class="event__available-offers">
+            ${optionsMarkup}
+          </div>
         </section>
-      </form>
-    </li>`
+      </section>
+    </form>
+    ${isEventNew ? `` : `</li>`}`
   );
 };
 
 export default class EventEdit extends SmartView {
-  constructor(isEventNew, event = BLANK_EVENT) {
+  constructor(isEventNew = false, event = BLANK_EVENT) {
     super();
 
     this._isEventNew = isEventNew;
     this._data = EventEdit.parseEventToData(event);
     this._flatpicker = null;
-    this._endDatepicker = null;
 
+    this._saveClickHandler = this._saveClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._typeInputHandler = this._typeInputHandler.bind(this);
@@ -174,6 +175,7 @@ export default class EventEdit extends SmartView {
     this._setInnerHandlers();
     this._setFlatpicker();
   }
+
 
   removeElement() {
     super.removeElement();
@@ -191,9 +193,15 @@ export default class EventEdit extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setFlatpicker();
+
+    this.setSaveClickHandler(this._callback.saveClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+    if (this._isEventNew) {
+      return;
+    }
+
     this.setFormRollupClickHandler(this._callback.formRollupClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _removeFlatpicker() {
@@ -288,6 +296,16 @@ export default class EventEdit extends SmartView {
   _deleteClickHandler(evt) {
     evt.preventDefault();
     this._callback.deleteClick(EventEdit.parseEventToData(this._data));
+  }
+
+  _saveClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.saveClick(this._data);
+  }
+
+  setSaveClickHandler(callback) {
+    this._callback.saveClick = callback;
+    this.getElement().querySelector(`.event__save-btn`).addEventListener(`click`, this._saveClickHandler);
   }
 
   setRollupClickHandler(callback) {

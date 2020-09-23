@@ -6,7 +6,7 @@ import NoEventsView from '../view/no-events';
 import {render, RenderPosition, remove} from '../utils/render';
 import EventPresenter from './event';
 import EventNewPresenter from './event-new';
-import {sortTime, sortPrice} from '../utils/event';
+import {sortTime, sortPrice, sortDefault} from '../utils/event';
 import {filter} from '../utils/filter';
 import {SortType, UpdateType, UserAction, FilterType} from '../const';
 
@@ -18,6 +18,7 @@ export default class Trip {
     this._currentSortType = SortType.DEFAULT;
     this._days = [];
     this._eventPresenter = {};
+    this._sortComponent = null;
 
     this._daysContainerComponent = new DaysContainerView();
     this._noEventsComponent = new NoEventsView();
@@ -40,7 +41,7 @@ export default class Trip {
   createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+    this._eventNewPresenter.init(this._daysContainerComponent);
   }
 
   _getEvents() {
@@ -53,6 +54,8 @@ export default class Trip {
         return filtredEvents.sort(sortTime);
       case SortType.PRICE:
         return filtredEvents.sort(sortPrice);
+      case SortType.DEFAULT:
+        return filtredEvents.sort(sortDefault);
     }
 
     return filtredEvents;
@@ -110,11 +113,7 @@ export default class Trip {
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
-  _getDays(events, sortType) {
-    if (sortType === `default`) {
-      events.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
-    }
-
+  _getDays(events) {
     return events
       .slice(1)
       .reduce((summ, currentEvent) => {
@@ -149,9 +148,7 @@ export default class Trip {
 
   _renderEvent(eventsContainer, event) {
     const eventPresenter = new EventPresenter(eventsContainer, event, this._handleViewAction, this._handleModeChange);
-
     eventPresenter.init(event);
-
     this._eventPresenter[event.id] = eventPresenter;
   }
 

@@ -1,6 +1,6 @@
 import EventEditView from '../view/event-edit';
 import {generateId} from '../mock/event';
-import {render, RenderPosition, remove} from '../utils/render';
+import {remove} from '../utils/render';
 import {UserAction, UpdateType} from '../const';
 
 export default class EventNew {
@@ -10,21 +10,21 @@ export default class EventNew {
 
     this._newEventComponent = null;
 
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleSaveClick = this._handleSaveClick.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
-    this._onEscKeyDown = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(daysContainer) {
     if (this._newEventComponent !== null) {
       return;
     }
 
-    this._newEventComponent = new EventEditView(false);
-    this._newEventComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._newEventComponent = new EventEditView(true);
+    this._newEventComponent.setSaveClickHandler(this._handleSaveClick);
     this._newEventComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._eventsContainer, this._newEventComponent, RenderPosition.AFTERBEGIN);
+    this._eventsContainer.insertBefore(this._newEventComponent.getElement(), daysContainer.getElement());
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
@@ -40,7 +40,7 @@ export default class EventNew {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  _handleFormSubmit(event) {
+  _handleSaveClick(event) {
     this._changeData(
         UserAction.ADD_TASK,
         UpdateType.MINOR,

@@ -1,11 +1,25 @@
 import {getRandomItemOfArray, getRandomInteger, getRandomBoolean, getRandomObjectItem, getRandomArray} from '../utils/common';
 import {cities, eventTypes, optionsArray} from './../const';
 
+const BLANK_EVENT = {
+  id: 0,
+  isFavorite: false,
+  type: `taxi`,
+  city: `Moscow`,
+  options: getRandomArray(optionsArray),
+  price: 0,
+  startDate: new Date(),
+  endDate: new Date(),
+  info: null,
+  photos: `http://picsum.photos/248/152?r=${Math.random()}`,
+};
+
 const getStartDate = () => {
   const maxGap = 1000 * 60 * 60 * 24 * 7;
   const randomGap = getRandomInteger(-maxGap, maxGap);
 
   const currentDate = new Date();
+
   currentDate.setTime(currentDate.getTime() + randomGap);
 
   return currentDate;
@@ -47,4 +61,4 @@ const generateEvent = () => {
   };
 };
 
-export {generateEvent, generateId};
+export {generateEvent, generateId, BLANK_EVENT};

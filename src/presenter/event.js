@@ -1,8 +1,8 @@
 import EventView from '../view/event';
 import EventEditView from '../view/event-edit';
-import {render, RenderPosition, replace, remove} from '../utils/render';
-import {UserAction, UpdateType} from '../const';
 import {isDatesEqual} from '../utils/datetime';
+import {UserAction, UpdateType} from '../const';
+import {render, RenderPosition, replace, remove} from '../utils/render';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -36,8 +36,8 @@ export default class Event {
     this._eventEditComponent = new EventEditView(false, event);
 
     this._eventComponent.setRollupClickHandler(this._handleRollupClick);
-    this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormRollupClickHandler(this._handleFormRollupClick);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -123,7 +123,6 @@ export default class Event {
         isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
         update
     );
-
     this._replaceFormToEvent();
   }
 

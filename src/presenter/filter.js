@@ -21,14 +21,18 @@ export default class Filter {
     // Записываем выбранный фильтр (в первый раз EVERYTHING)
     this._currentFilter = this._filterModel.getFilter();
 
+
     // Записываем предыдущий экземпляр компонента фильтров (в первый раз - null)
     const prevFilterComponent = this._filtersComponent;
+
 
     // Создаём компонент фильтров, передаём массив фильтров и выбранный фильтр (в первый раз EVERYTHING)
     this._filtersComponent = new FilterView(this._getFilters(), this._currentFilter);
 
+
     // Устанавливаем обработчик изменения фильтра, вызываем в нём метод _handleFilterTypeChange
     this._filtersComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filtersComponent, RenderPosition.BEFOREEND);

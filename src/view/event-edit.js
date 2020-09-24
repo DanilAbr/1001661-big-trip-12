@@ -3,10 +3,43 @@ import {getPlaceholder} from '../utils/event';
 import {getFormatedInputDatetime} from '../utils/datetime';
 import {eventTypes, cities} from '../const';
 import {capitalizeFirstLetter} from '../utils/common';
-import flatpickr from 'flatpickr';
-
-import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import {BLANK_EVENT} from '../mock/event';
+
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+const createContainer = (isEventNew) => // Ask ???
+  `${isEventNew ? `` : `<li class="trip-events__item">`}<form class="${isEventNew ? `trip-events__item` : ``} event event--edit" action="#" method="post">`;
+
+const createTypeGroupListTemplate = (activities) =>
+  activities.length < 0 ? `` : activities.map((type) =>
+    `<div class="event__type-item">
+      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
+    </div>`).join(`\n`);
+
+const createTypeListMarkup = () => {
+  const transferTypesList = createTypeGroupListTemplate(eventTypes.drive);
+  const activityTypesList = createTypeGroupListTemplate(eventTypes.stopping);
+
+  return (
+    `<div class="event__type-list">
+      <fieldset class="event__type-group">
+        <legend class="visually-hidden">Transfer</legend>
+        ${transferTypesList}
+      </fieldset>
+
+      <fieldset class="event__type-group">
+        <legend class="visually-hidden">Activity</legend>
+        ${activityTypesList}
+      </fieldset>
+    </div>`
+  );
+};
+
+const createCitiesDatalist = () =>
+  cities.length < 0 ? `` : cities.map((city) =>
+    `<option value="${city}"></option>`).join(`\n`);
 
 const getOptionsMarkup = (options) =>
   options.length < 0 ? `` : options.map(({name, price}, index) =>
@@ -25,60 +58,38 @@ const getOptionsMarkup = (options) =>
       </label>
     </div>`).join(`\n`);
 
-const createTransferListTemplate = () =>
-  eventTypes.drive.length < 0 ? `` : eventTypes.drive.map((type) =>
-    `<div class="event__type-item">
-      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
-    </div>`).join(`\n`);
-
-const createActivityListTemplate = () =>
-  eventTypes.stopping.length < 0 ? `` : eventTypes.stopping.map((type) =>
-    `<div class="event__type-item">
-      <input id="event-type-${type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-      <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
-    </div>`).join(`\n`);
-
-const createCitiesDatalist = () =>
-  cities.length < 0 ? `` : cities.map((city) =>
-    `<option value="${city}"></option>`).join(`\n`);
-
 const createFavoriteMarkup = (isFavorite) =>
   `<input
-      id="event-favorite-1"
-      class="event__favorite-checkbox  visually-hidden"
-      type="checkbox"
-      name="event-favorite"
-      ${isFavorite ? `checked` : ``}
-    />
-    <label class="event__favorite-btn" for="event-favorite-1">
-      <span class="visually-hidden">Add to favorite</span>
-      <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-        <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-      </svg>
-    </label>`;
+    id="event-favorite-1"
+    class="event__favorite-checkbox  visually-hidden"
+    type="checkbox"
+    name="event-favorite"
+    ${isFavorite ? `checked` : ``}
+  />
+  <label class="event__favorite-btn" for="event-favorite-1">
+    <span class="visually-hidden">Add to favorite</span>
+    <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+      <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+    </svg>
+  </label>`;
 
 const createFormRollupButton = () =>
   `<button class="event__rollup-btn" type="button">
     <span class="visually-hidden">Open event</span>
   </button>`;
 
-const createContainer = (isEventNew) =>
-  `${isEventNew ? `` : `<li class="trip-events__item">`}<form class="${isEventNew ? `trip-events__item` : ``} event event--edit" action="#" method="post">`;
-
 const createEventEditTemplate = (event, isEventNew) => {
   const {city, type, price, startDate, endDate, options, isFavorite} = event;
 
+  const container = createContainer(isEventNew);
+  const typeList = createTypeListMarkup();
+  const eventLabel = `${capitalizeFirstLetter(type)} ${getPlaceholder(type)}`;
+  const citiesDatalist = createCitiesDatalist(cities);
   const startDateTime = getFormatedInputDatetime(startDate);
   const endDatetime = getFormatedInputDatetime(endDate);
   const optionsMarkup = getOptionsMarkup(options);
-  const transferTypesList = createTransferListTemplate();
-  const activityTypesList = createActivityListTemplate();
-  const citiesDatalist = createCitiesDatalist(cities);
-  const eventLabel = `${capitalizeFirstLetter(type)} ${getPlaceholder(type)}`;
   const favoriteMarkup = createFavoriteMarkup(isFavorite);
   const formRollupButton = createFormRollupButton();
-  const container = createContainer(isEventNew);
 
   return (
     `${container}
@@ -90,17 +101,7 @@ const createEventEditTemplate = (event, isEventNew) => {
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-          <div class="event__type-list">
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Transfer</legend>
-              ${transferTypesList}
-            </fieldset>
-
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Activity</legend>
-              ${activityTypesList}
-            </fieldset>
-          </div>
+          ${typeList}
         </div>
 
         <div class="event__field-group  event__field-group--destination">
@@ -161,21 +162,23 @@ export default class EventEdit extends SmartView {
     this._data = EventEdit.parseEventToData(event);
     this._flatpicker = null;
 
+    if (!this._isEventNew) {
+      this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+      this._formSubmitHandler = this._formSubmitHandler.bind(this);
+      this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
+    }
+
     this._saveClickHandler = this._saveClickHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._typeInputHandler = this._typeInputHandler.bind(this);
     this._startDateInputChangeHandler = this._startDateInputChangeHandler.bind(this);
     this._endDateInputChangeHalder = this._endDateInputChangeHalder.bind(this);
     this._cityInputHandler = this._cityInputHandler.bind(this);
-    this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setFlatpicker();
   }
-
 
   removeElement() {
     super.removeElement();
@@ -190,18 +193,17 @@ export default class EventEdit extends SmartView {
     return createEventEditTemplate(this._data, this._isEventNew);
   }
 
-  restoreHandlers() {
-    this._setInnerHandlers();
+  restoreHandlers() { // Ask ??? Когда ???
     this._setFlatpicker();
-
-    this.setSaveClickHandler(this._callback.saveClick);
+    this._setInnerHandlers();
     this.setDeleteClickHandler(this._callback.deleteClick);
-    if (this._isEventNew) {
-      return;
-    }
 
-    this.setFormRollupClickHandler(this._callback.formRollupClick);
-    this.setFormSubmitHandler(this._callback.formSubmit);
+    if (this._isEventNew) {
+      this.setSaveClickHandler(this._callback.saveClick);
+    } else {
+      this.setFormRollupClickHandler(this._callback.formRollupClick);
+      this.setFormSubmitHandler(this._callback.formSubmit);
+    }
   }
 
   _removeFlatpicker() {
@@ -237,7 +239,7 @@ export default class EventEdit extends SmartView {
     );
   }
 
-  _setInnerHandlers() {
+  _setInnerHandlers() { // Ask ???
     this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._priceInputHandler);
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeInputHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._cityInputHandler);
@@ -269,7 +271,7 @@ export default class EventEdit extends SmartView {
     this.updateData({type: evt.target.value});
   }
 
-  _cityInputHandler(evt) {
+  _cityInputHandler(evt) { // Ask ???
     evt.preventDefault();
     const prevCity = this._data.city;
 
@@ -333,7 +335,7 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
   }
 
-  static parseEventToData(event) {
+  static parseEventToData(event) { // Ask Что такое статичный метод?
     return Object.assign({}, event);
   }
 }

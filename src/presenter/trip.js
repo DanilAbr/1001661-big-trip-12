@@ -47,7 +47,7 @@ export default class Trip {
   _getEvents() {
     const filterType = this._filterModel.getFilter();
     const events = this._eventsModel.getEvents();
-    const filtredEvents = filter[filterType](events);
+    const filtredEvents = filter[filterType](events); // Как это работает??
 
     switch (this._currentSortType) {
       case SortType.TIME:
@@ -109,7 +109,6 @@ export default class Trip {
   _renderSort(sortType) {
     this._sortComponent = new SortView(sortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
@@ -135,7 +134,7 @@ export default class Trip {
   _renderDays(events) {
     render(this._tripContainer, this._daysContainerComponent, RenderPosition.BEFOREEND);
 
-    this._days = this._getDays(events, this._currentSortType);
+    this._days = this._getDays(events);
 
     this._days.forEach((day, index) => {
       this._dayComponent = new DayView();

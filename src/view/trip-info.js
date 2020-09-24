@@ -1,16 +1,25 @@
 import AbstractView from './abstract';
 import {getFormatedDate} from '../utils/datetime';
+import {sortDefault} from '../utils/event';
 
-const getFormatedTotalPeriod = (firstDate, lastDate) => {
-  const formatedFirstDate = getFormatedDate(firstDate);
-  let formatedLastDate = getFormatedDate(lastDate);
+const getFormatedTotalPeriod = (startDate, endDate) => { // Ask ???
+  const firstMonth = startDate.getMonth();
+  const lastMonth = endDate.getMonth();
 
-  if (firstDate.getMonth() === lastDate.getMonth()) {
-    formatedLastDate = formatedLastDate.slice(-2);
-  }
+  const firstFormatedDate = getFormatedDate(startDate);
+  const lastFormatedDate =
+    `${firstMonth === lastMonth
+      ? getFormatedDate(endDate).slice(-2)
+      : getFormatedDate(endDate)}`;
 
-  return `${formatedFirstDate}&nbsp;&mdash;&nbsp;${formatedLastDate}`;
+  return `${firstFormatedDate}&nbsp;&mdash;&nbsp;${lastFormatedDate}`;
 };
+
+// const getFormatedTotalPeriod = (start, end) =>
+//   `${getFormatedDate(start)}&nbsp;&mdash;&nbsp;
+//   ${start.getMonth() === end.getMonth()
+//     ? getFormatedDate(end).slice(-2)
+//     : getFormatedDate(end)}`;
 
 const getMainWay = (events) =>
   `${events[0].city}
@@ -66,7 +75,7 @@ const createTripInfoTemplate = (events) => {
 export default class Info extends AbstractView {
   constructor(events) {
     super();
-    this._events = events;
+    this._events = events.sort(sortDefault);
   }
 
   getTemplate() {

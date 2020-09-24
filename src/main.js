@@ -1,4 +1,4 @@
-import InfoView from './view/info';
+import InfoView from './view/trip-info';
 import NewEventButtonView from './view/new-event-button';
 import MenuView from './view/menu';
 import FilterPresenter from './presenter/filter';
@@ -8,11 +8,10 @@ import FilterModel from './model/filter';
 import {generateEvent} from './mock/event';
 import {render, RenderPosition} from './utils/render';
 
-const EVENTS_COUNT = 3;
-const events = new Array(EVENTS_COUNT) // Создаём массив евентов
+const EVENTS_COUNT = 20;
+const events = new Array(EVENTS_COUNT)
   .fill()
-  .map(generateEvent)
-  .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+  .map(generateEvent);
 
 // Создаём модель евентов
 // Добавляем евенты в модель
